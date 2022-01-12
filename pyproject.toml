@@ -29,7 +29,7 @@ bump2version = "^0.5"
 changelog-gen = "~0.5.0"
 
 [tool.poetry.scripts]
-begin = 'product_matching_product_search.cli.health_check:main'
+begin = 'begin.cli.cli:main'
 
 [build-system]
 requires = ["poetry>=0.12"]
