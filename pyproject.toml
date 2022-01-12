@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "begin"
+version = "0.0.0"
+description = "A utility for running targets in a targets.py file"
+authors = ["Lachlan Marnham"]
+maintainers = ["Lachlan Marnham"]
+license = "MIT"
+repository="git@github.com:LachlanMarnham/begin.git"
+homepage="https://github.com/LachlanMarnham/begin"
+
+[[tool.poetry.source]]
+name = "farfetch"
+url = "https://pypi.prod.konnekt.us/simple/"
+
+[tool.poetry.dependencies]
+python = "~3.7"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.7"
+flake8-commas = "^2.0"
+flake8-isort = "^2.7"
+flake8-quotes = "^2.1"
+isort = "^4.3"
+pytest = "^4.3"
+pytest-cov = "^2.8"
+pytest-env = "^0.6"
+pytest-random-order = "^1.0"
+bump2version = "^0.5"
+changelog-gen = "~0.5.0"
+
+[tool.poetry.scripts]
+begin = 'product_matching_product_search.cli.health_check:main'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
