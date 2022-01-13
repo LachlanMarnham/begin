@@ -1,16 +1,19 @@
 [tool.poetry]
-name = "begin"
+name = "begin-cli"
 version = "0.0.0"
 description = "A utility for running targets in a targets.py file"
 authors = ["Lachlan Marnham"]
 maintainers = ["Lachlan Marnham"]
 license = "MIT"
-repository="git@github.com:LachlanMarnham/begin.git"
+repository="https://github.com/LachlanMarnham/begin"
 homepage="https://github.com/LachlanMarnham/begin"
-
-[[tool.poetry.source]]
-name = "farfetch"
-url = "https://pypi.prod.konnekt.us/simple/"
+readme = "README.md"
+include = [
+    "LICENSE",
+]
+packages = [
+    { include = "begin" },
+]
 
 [tool.poetry.dependencies]
 python = "~3.7"
