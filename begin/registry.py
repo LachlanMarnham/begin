@@ -7,9 +7,16 @@ class TargetMetaData:
     registry_namespace: str
 
     @classmethod
-    def create(cls, function, registry_namespace):
+    def from_target_function(cls, function, registry_namespace):
+        return cls.from_target_name(
+            name=function.__name__,
+            registry_namespace=registry_namespace,
+        )
+
+    @classmethod
+    def from_target_name(cls, name, registry_namespace):
         return cls(
-            function_name=function.__name__,
+            function_name=name,
             registry_namespace=registry_namespace,
         )
 
