@@ -10,3 +10,6 @@ publish:
 
 release:
 	changelog-gen
+
+isort:
+	isort -y
