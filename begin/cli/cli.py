@@ -1,5 +1,6 @@
 import importlib.util
 from pathlib import Path
+import sys
 
 from begin.registry import Registry
 
@@ -23,3 +24,18 @@ def load_targets():
             if isinstance(attribute, Registry):
                 targets.append(attribute)
     return targets
+
+
+def main():
+    requested_target = sys.argv[1]
+    requested_namespace = 'global'
+    registries = load_targets()
+    registry_0 = registries[0]
+    registry_1 = registries[1]
+    target_0 = registry_0.get_target(requested_target, requested_namespace)
+    target_1 = registry_1.get_target(requested_target, requested_namespace)
+
+    if target_0 is not None:
+        target_0.execute()
+    if target_1 is not None:
+        target_1.execute()
