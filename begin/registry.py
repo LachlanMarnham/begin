@@ -60,7 +60,7 @@ class Registry:
             registry_namespace=self.name,
         )
         self.targets[new_target.key] = new_target
-    
+
     def get_target(self, target_name, registry_namespace):
         key = TargetMetaData.from_target_name(
             name=target_name,
