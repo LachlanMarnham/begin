@@ -23,11 +23,12 @@ class Target:
             registry_namespace=self._registry_namespace,
         )
 
+    @property
+    def key(self):
+        return self._metadata
+
     def execute(self):
         self.function()
-
-    def __hash__(self):
-        return hash(self._metadata)
 
 
 class Registry:
@@ -51,4 +52,4 @@ class Registry:
             function=function,
             registry_namespace=self.name,
         )
-        self.targets[(self.name, function.__name__)] = function
+        self.targets[new_target.key] = new_target
