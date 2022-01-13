@@ -13,3 +13,6 @@ release:
 
 isort:
 	isort -y
+
+check-style:
+	flake8

@@ -15,7 +15,7 @@ def get_targets_paths():
 def load_targets():
     targets = []
     for path in get_targets_paths():
-        spec = importlib.util.spec_from_file_location("module.name", path)
+        spec = importlib.util.spec_from_file_location('module.name', path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         for item in dir(module):

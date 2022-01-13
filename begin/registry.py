@@ -13,7 +13,7 @@ class Registry:
                 self._register_target(function, **kwargs)
                 return function
             return decorator
-    
+
     def _register_target(self, function, **kwargs):
         print(kwargs)
         print(function.__name__)
