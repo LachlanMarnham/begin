@@ -16,3 +16,6 @@ isort:
 
 check-style:
 	flake8
+
+tests:
+	pytest --cov=begin
