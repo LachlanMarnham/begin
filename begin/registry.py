@@ -25,7 +25,7 @@ class Target:
     def __init__(self, function, registry_namespace):
         self._function = function
         self._registry_namespace = registry_namespace
-        self._metadata = TargetMetaData.create(
+        self._metadata = TargetMetaData.from_target_function(
             function=self._function,
             registry_namespace=self._registry_namespace,
         )
@@ -60,3 +60,10 @@ class Registry:
             registry_namespace=self.name,
         )
         self.targets[new_target.key] = new_target
+    
+    def get_target(self, target_name, registry_namespace):
+        key = TargetMetaData.from_target_name(
+            name=target_name,
+            registry_namespace=registry_namespace,
+        )
+        return self.targets.get(key)
