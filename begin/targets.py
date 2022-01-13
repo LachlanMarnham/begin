@@ -1,4 +1,4 @@
-from begin.scripts.pymake import Registry
+from begin.registry import Registry
 
 
 registry = Registry()

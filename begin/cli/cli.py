@@ -1,14 +1,14 @@
 from pathlib import Path
 import importlib.util
-from begin.scripts.pymake import Registry
+from begin.registry import Registry
 
 
 def get_targets_paths():
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
-    # global_targets_dir = Path.home().joinpath('.begin')
-    # if global_targets_dir.exists():
-    #     yield from global_targets_dir.rglob('*targets.py')
+    global_targets_dir = Path.home().joinpath('.begin')
+    if global_targets_dir.exists():
+        yield from global_targets_dir.rglob('*targets.py')
 
 
 def load_targets():
