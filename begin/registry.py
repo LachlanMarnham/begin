@@ -35,7 +35,7 @@ class Target:
         return self._metadata
 
     def execute(self):
-        self.function()
+        self._function()
 
 
 class Registry:
