@@ -48,3 +48,15 @@ class TestTargetMetaData:
 
         assert metadata.function_name == 'stub_function'
         assert metadata.registry_namespace == dummy_registry_namespace
+
+    def test_from_target_name(self, make_random_string):
+        dummy_function_name = make_random_string()
+        dummy_registry_namespace = make_random_string()
+
+        metadata = TargetMetaData.from_target_name(
+            name=dummy_function_name,
+            registry_namespace=dummy_registry_namespace,
+        )
+
+        assert metadata.function_name == dummy_function_name
+        assert metadata.registry_namespace == dummy_registry_namespace
