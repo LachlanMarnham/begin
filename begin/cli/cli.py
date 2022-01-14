@@ -2,7 +2,10 @@ import importlib.util
 import sys
 from pathlib import Path
 
-from begin.registry import Registry
+from begin.registry import (
+    Registry,
+    RegistryManager,
+)
 
 
 def get_targets_paths():
@@ -13,7 +16,7 @@ def get_targets_paths():
         yield from global_targets_dir.rglob('*targets.py')
 
 
-def load_targets():
+def load_registries():
     targets = []
     for path in get_targets_paths():
         spec = importlib.util.spec_from_file_location('module.name', path)
@@ -28,14 +31,14 @@ def load_targets():
 
 def main():
     requested_target = sys.argv[1]
-    requested_namespace = 'global'
-    registries = load_targets()
-    registry_0 = registries[0]
-    registry_1 = registries[1]
-    target_0 = registry_0.get_target(requested_target, requested_namespace)
-    target_1 = registry_1.get_target(requested_target, requested_namespace)
+    requested_namespace = sys.argv[2]
+    registries = load_registries()
+    manager = RegistryManager(registries)
+    target = manager.get_target(requested_target, requested_namespace)
+    target.execute()
 
-    if target_0 is not None:
-        target_0.execute()
-    if target_1 is not None:
-        target_1.execute()
+
+# >>> begin install
+# The target `install` was found in multiple registries. Please select one to continue:
+# [1] default
+# [2] global

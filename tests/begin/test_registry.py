@@ -60,3 +60,11 @@ class TestTargetMetaData:
 
         assert metadata.function_name == dummy_function_name
         assert metadata.registry_namespace == dummy_registry_namespace
+
+
+class TestTarget:
+    pass
+
+
+class TestRegistry:
+    pass
