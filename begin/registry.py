@@ -118,10 +118,10 @@ class TargetMap:
         return self._map[target][namespace]
 
 
-# class RegistryManager:
+class RegistryManager:
 
-#     def __init__(self, registries):
-#         self._target_map = TargetMap.create(registries)
+    def __init__(self, registries):
+        self._target_map = TargetMap.create(registries)
 
-#     def get_target(self, requested_target, requested_namespace):
-#         return self._target_map.get(requested_target, requested_namespace)
+    def get_target(self, requested_target, requested_namespace):
+        return self._target_map.get(requested_target, requested_namespace)
