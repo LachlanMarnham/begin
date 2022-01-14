@@ -34,6 +34,14 @@ class Target:
     def key(self):
         return self._metadata
 
+    # @property
+    # def registry_namespace(self):
+    #     return self._metadata.registry_namespace
+
+    # @property
+    # def function_name(self):
+    #     return self._metadata.function_name
+
     def execute(self):
         self._function()
 
@@ -67,3 +75,53 @@ class Registry:
             registry_namespace=registry_namespace,
         )
         return self.targets.get(key)
+
+
+class TargetMap:
+
+    def __init__(self, registries):
+        self._registries = registries
+        self._map = {}
+
+    @classmethod
+    def create(cls, registries):
+        target_map = cls(registries)
+        target_map.compile()
+        return target_map
+
+    def compile(self):
+        for registry in self._registries:
+            self.unpack_registry(registry)
+
+    def unpack_registry(self, registry):
+        # TODO target_metadata can probably be done away with:
+        #   1) don't get rid of metadata immediately as it may be useful
+        #   2) Registry._targets is a list
+        #   3) this loop becomes for target in targets
+        #   4) calls to add before should just use target.function_name and target.registry_namespace
+        targets = registry.targets
+        for _, target in targets.items():
+            self.add(target)
+
+    def add(self, target):
+        # TODO revisit this, preferably without using nested defaultdicts
+        target_name = target.function_name
+        namespace = target.registry_namespace
+        if target_name not in self._map:
+            self._map[target_name] = {
+                namespace: target,
+            }
+        else:
+            self._map[target_name][namespace] = target
+
+    def get(self, target, namespace):
+        return self._map[target][namespace]
+
+
+# class RegistryManager:
+
+#     def __init__(self, registries):
+#         self._target_map = TargetMap.create(registries)
+
+#     def get_target(self, requested_target, requested_namespace):
+#         return self._target_map.get(requested_target, requested_namespace)
