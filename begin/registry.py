@@ -1,4 +1,7 @@
+from collections import defaultdict
 from dataclasses import dataclass
+import inspect
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -51,6 +54,20 @@ class Registry:
     def __init__(self, name='default'):
         self.name = name
         self.targets = {}
+        self.path = self._get_calling_context_path()
+
+    @staticmethod
+    def _get_calling_context_path() -> Path:
+        """ Gets the `Path` of the first context in the stack to not be __file__.
+        Intended to be called at instantiation-time to track the filenames of different
+        targets.py files.
+        Example:
+            # /path/to/foo.py
+            Registry._get_calling_context_path()  # Path('/path/to/foo.py')
+        """
+        stack = inspect.stack()
+        calling_context = next(context for context in stack if context.filename != __file__)
+        return Path(calling_context.filename)
 
     def register_target(self, *args, **kwargs):
         if args:
@@ -121,7 +138,15 @@ class TargetMap:
 class RegistryManager:
 
     def __init__(self, registries):
+        # self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
+
+    def find_namespace_collisions(self, registries):
+        # # Found multiple definitions of the same registry
+        # registry_path_map = defaultdict(list)
+        # for registry in registries:
+        #     registry_path_map[registry.name].append(registry.path)
+
 
     def get_target(self, requested_target, requested_namespace):
         return self._target_map.get(requested_target, requested_namespace)
