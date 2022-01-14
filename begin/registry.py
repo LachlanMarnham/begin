@@ -34,13 +34,13 @@ class Target:
     def key(self):
         return self._metadata
 
-    # @property
-    # def registry_namespace(self):
-    #     return self._metadata.registry_namespace
+    @property
+    def registry_namespace(self):
+        return self._metadata.registry_namespace
 
-    # @property
-    # def function_name(self):
-    #     return self._metadata.function_name
+    @property
+    def function_name(self):
+        return self._metadata.function_name
 
     def execute(self):
         self._function()
