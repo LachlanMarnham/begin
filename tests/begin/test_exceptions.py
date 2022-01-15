@@ -1,7 +1,7 @@
 import pytest
-
+from pathlib import Path
 from begin import exceptions
-
+from begin.constants import ExitCodeEnum
 
 class TestExceptions:
 
@@ -27,3 +27,35 @@ class TestExceptions:
             StubError('Some message...')
 
         assert str(e_info.value) == 'StubError._exit_code_enum does not have type ExitCodeEnum'
+
+    def test_registry_name_collision_error_properties(self, make_random_string):
+        # make_random_string is called with no_whitespace=True to avoid newlines,
+        # so that the number of lines in the error message can be counted correctly
+        stub_namespaces = [make_random_string(no_whitespace=True) for _ in range(2)]
+        stub_paths = [make_random_string(no_whitespace=True) for _ in range(5)]
+        colliding_namespaces = {
+            stub_namespaces[0]: stub_paths[:2],
+            stub_namespaces[1]: stub_paths[2:],
+        }
+
+        err = exceptions.RegistryNameCollisionError(colliding_namespaces)
+
+        # Exception has the correct exit code
+        assert err.exit_code == ExitCodeEnum.REGISTRY_NAME_COLLISION.value
+
+        # All namespaces and paths should appear in the error message
+        random_strings = stub_namespaces + stub_paths
+        assert all(s in err.message for s in random_strings)
+
+        # There should be one block in the message for each namespace
+        assert err.message.count('Found multiple registries with name') == len(stub_namespaces)
+
+        # Error message has the correct number of lines
+        assert len(err.message.splitlines()) == len(stub_namespaces) + len(stub_paths)
+
+    def test_child_classes_raise_correctly(self):
+        # Because metaclasses and inheritance from Exception doesn't play
+        # well together (see docstring for exceptions.ExitCodeMeta), we should
+        # check that all childclasses retain the ability to raise correctly.
+        with pytest.raises(exceptions.RegistryNameCollisionError):
+            raise exceptions.RegistryNameCollisionError({})
