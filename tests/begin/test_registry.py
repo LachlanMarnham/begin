@@ -89,6 +89,17 @@ class TestTarget:
             ),
         ]
 
+    def test_key(self):
+        pass
+
+    def test_registry_namespace(self):
+        pass
+
+    def test_function_name(self):
+        pass
+
+    def test_execute(self):
+        pass
 
 class TestRegistry:
     pass
