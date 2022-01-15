@@ -57,5 +57,22 @@ class TestExceptions:
         # Because metaclasses and inheritance from Exception doesn't play
         # well together (see docstring for exceptions.ExitCodeMeta), we should
         # check that all childclasses retain the ability to raise correctly.
+        tested_subclasses = 0
+
         with pytest.raises(exceptions.RegistryNameCollisionError):
+            tested_subclasses += 1
             raise exceptions.RegistryNameCollisionError({})
+
+        # Make the test fail if a new exception is added without an explicit
+        # `with pytest.raises ...` check. Note: we can't just look use 
+        # exceptions.ExitCodeMeta.__sublcasses__ to count the subclasses, because
+        # pytest injects TestExceptions
+        subclasses = []
+        for attribute in dir(exceptions):
+            obj = getattr(exceptions, attribute)
+            if obj == exceptions.BeginError:
+                continue
+            elif isinstance(obj, exceptions.ExitCodeMeta):
+                subclasses.append(obj)
+
+        assert len(subclasses) == tested_subclasses, 'There are un-tested subclasses of BeginError'
