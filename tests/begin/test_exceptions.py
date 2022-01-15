@@ -1,7 +1,10 @@
-import pytest
 from pathlib import Path
+
+import pytest
+
 from begin import exceptions
 from begin.constants import ExitCodeEnum
+
 
 class TestExceptions:
 
@@ -11,7 +14,7 @@ class TestExceptions:
         instantiation-time. """
         class StubError(exceptions.BeginError):
             pass
-        
+
         with pytest.raises(NotImplementedError) as e_info:
             StubError('Some message...')
 
@@ -22,7 +25,7 @@ class TestExceptions:
         cls._exit_code_enum does not have type ExitCodeEnum. """
         class StubError(exceptions.BeginError):
             _exit_code_enum = "this should't be a str"
-        
+
         with pytest.raises(ValueError) as e_info:
             StubError('Some message...')
 
@@ -32,7 +35,7 @@ class TestExceptions:
         # make_random_string is called with no_whitespace=True to avoid newlines,
         # so that the number of lines in the error message can be counted correctly
         stub_namespaces = [make_random_string(no_whitespace=True) for _ in range(2)]
-        stub_paths = [make_random_string(no_whitespace=True) for _ in range(5)]
+        stub_paths = [Path(make_random_string(no_whitespace=True)) for _ in range(5)]
         colliding_namespaces = {
             stub_namespaces[0]: stub_paths[:2],
             stub_namespaces[1]: stub_paths[2:],
@@ -45,7 +48,7 @@ class TestExceptions:
 
         # All namespaces and paths should appear in the error message
         random_strings = stub_namespaces + stub_paths
-        assert all(s in err.message for s in random_strings)
+        assert all(str(s) in err.message for s in random_strings)
 
         # There should be one block in the message for each namespace
         assert err.message.count('Found multiple registries with name') == len(stub_namespaces)
@@ -64,7 +67,7 @@ class TestExceptions:
             raise exceptions.RegistryNameCollisionError({})
 
         # Make the test fail if a new exception is added without an explicit
-        # `with pytest.raises ...` check. Note: we can't just look use 
+        # `with pytest.raises ...` check. Note: we can't just look use
         # exceptions.ExitCodeMeta.__sublcasses__ to count the subclasses, because
         # pytest injects TestExceptions
         subclasses = []
