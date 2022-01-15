@@ -1,11 +1,16 @@
 import importlib.util
+import logging
 import sys
 from pathlib import Path
 
+from begin.exceptions import BeginError
 from begin.registry import (
     Registry,
     RegistryManager,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_targets_paths():
@@ -29,7 +34,7 @@ def load_registries():
     return targets
 
 
-def main():
+def _main():
     requested_target = sys.argv[1]
     requested_namespace = sys.argv[2]
     registries = load_registries()
@@ -38,6 +43,17 @@ def main():
     target.execute()
 
 
+def main():
+    try:
+        _main()
+    except BeginError as ex:
+        logger.error(ex.message)
+        sys.exit(ex.exit_code)
+    else:
+        sys.exit(0)
+
+
+# TODO
 # >>> begin install
 # The target `install` was found in multiple registries. Please select one to continue:
 # [1] default
