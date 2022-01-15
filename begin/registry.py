@@ -3,7 +3,10 @@ import logging
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import (
+    Callable,
+    List,
+)
 
 from begin.exceptions import RegistryNameCollisionError
 
@@ -32,7 +35,7 @@ class TargetMetaData:
 
 
 class Target:
-    def __init__(self, function, registry_namespace):
+    def __init__(self, function: Callable, registry_namespace: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
         self._metadata = TargetMetaData.from_target_function(
