@@ -99,7 +99,20 @@ class TestTarget:
         pass
 
     def test_execute(self):
-        pass
+        mock_function = mock.Mock()
+        mock_function.__name__ = 'mock_function'
+        mock_target = Target(
+            function=mock_function,
+            registry_namespace='namespace',
+        )
+        return_value = mock_target.execute()
+
+        # Target.execute should defer to Target._function
+        assert mock_function.call_args_list == [mock.call()]
+
+        # Target.execute should return None
+        assert return_value is None
+
 
 class TestRegistry:
     pass
