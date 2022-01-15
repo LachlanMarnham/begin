@@ -1,7 +1,14 @@
+import inspect
+import logging
 from collections import defaultdict
 from dataclasses import dataclass
-import inspect
 from pathlib import Path
+from typing import List
+
+from begin.exceptions import RegistryNameCollisionError
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -137,16 +144,19 @@ class TargetMap:
 
 class RegistryManager:
 
-    def __init__(self, registries):
-        # self.find_namespace_collisions(registries)
+    def __init__(self, registries: List[Registry]) -> None:
+        self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
 
-    def find_namespace_collisions(self, registries):
-        # # Found multiple definitions of the same registry
-        # registry_path_map = defaultdict(list)
-        # for registry in registries:
-        #     registry_path_map[registry.name].append(registry.path)
+    def find_namespace_collisions(self, registries: List[Registry]) -> None:
+        registry_path_map = defaultdict(list)
+        for registry in registries:
+            registry_path_map[registry.name].append(registry.path)
 
+        colliding_namespaces = {name: paths for name, paths in registry_path_map.items() if len(paths) > 1}
+
+        if colliding_namespaces:
+            raise RegistryNameCollisionError(colliding_namespaces=colliding_namespaces)
 
     def get_target(self, requested_target, requested_namespace):
         return self._target_map.get(requested_target, requested_namespace)
