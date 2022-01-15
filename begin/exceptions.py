@@ -13,9 +13,16 @@ class ExitCodeMeta(type):
     This is a minimal interface which ensures classes which fail to implement an `cls._exit_code_enum`
     of type `ExitCodeEnum` raise *at instantiation time*, but which does not implement any of the
     other functionality of `abc`. """
+
     def __call__(cls, *args, **kwargs):
+        # Raise if cls._exit_code_enum was not implemented
+        if not hasattr(cls, '_exit_code_enum'):
+            raise NotImplementedError(f'{cls.__name__} does not implement _exit_code_enum')
+
+        # Raise if cls._exit_code_enum has wrong type
         if not isinstance(cls._exit_code_enum, ExitCodeEnum):
-            raise NotImplementedError
+            raise ValueError(f'{cls.__name__}._exit_code_enum does not have type ExitCodeEnum')
+
         return super(ExitCodeMeta, cls).__call__(*args, **kwargs)
 
 
