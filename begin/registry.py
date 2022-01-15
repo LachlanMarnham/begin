@@ -44,18 +44,18 @@ class Target:
         )
 
     @property
-    def key(self):
+    def key(self) -> TargetMetaData:
         return self._metadata
 
     @property
-    def registry_namespace(self):
+    def registry_namespace(self) -> str:
         return self._metadata.registry_namespace
 
     @property
-    def function_name(self):
+    def function_name(self) -> str:
         return self._metadata.function_name
 
-    def execute(self):
+    def execute(self) -> None:
         self._function()
 
 
