@@ -3,23 +3,36 @@ from typing import (
     List,
     Mapping,
 )
+
 from begin.constants import ExitCodeEnum
 
 
-class InterfaceMeta(type):
+class ExitCodeMeta(type):
+    """ Exceptions cannot be combined with abstract base classes, see:
+    https://stackoverflow.com/questions/2862153/python-2-6-3-abstract-base-class-misunderstanding/2862419#2862419
+    This is a minimal interface which ensures classes which fail to implement an `cls._exit_code_enum`
+    of type `ExitCodeEnum` raise *at instantiation time*, but which does not implement any of the
+    other functionality of `abc`. """
     def __call__(cls, *args, **kwargs):
         if not isinstance(cls._exit_code_enum, ExitCodeEnum):
             raise NotImplementedError
-        return super(InterfaceMeta, cls).__call__(*args, **kwargs)
+        return super(ExitCodeMeta, cls).__call__(*args, **kwargs)
 
 
-class BeginError(Exception, metaclass=InterfaceMeta):
-
-    _exit_code_enum = None
+class BeginError(Exception, metaclass=ExitCodeMeta):
+    """ A base class for all custom exceptions. Anticipated exceptions should not
+    be raised to the user-level, but be caught at the cli-level and handled with an
+    appropriate message and exit code. All inheriting classes must implement
+    `cls._exit_code_enum` (see: `ExitCodeMeta`). """
+    _exit_code_enum: None
 
     @property
     def exit_code(self) -> int:
         return self._exit_code_enum.value
+
+    @property
+    def message(self) -> str:
+        return str(self)
 
 
 class RegistryNameCollisionError(BeginError):
@@ -38,7 +51,3 @@ class RegistryNameCollisionError(BeginError):
                 lines.append(f'\t{path}')
         message = '\n'.join(lines)
         super().__init__(message)
-    
-    @property
-    def message(self):
-        return str(self)
