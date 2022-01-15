@@ -1,4 +1,9 @@
-from begin.registry import TargetMetaData
+from unittest import mock
+
+from begin.registry import (
+    Target,
+    TargetMetaData,
+)
 
 
 class TestTargetMetaData:
@@ -61,9 +66,31 @@ class TestTargetMetaData:
         assert metadata.function_name == dummy_function_name
         assert metadata.registry_namespace == dummy_registry_namespace
 
-
+# noqa: E731
 class TestTarget:
-    pass
+
+    @mock.patch('begin.registry.TargetMetaData')
+    def test_initialisation(self, MockTargetMetaData):
+        stub_function = lambda: ...
+        stub_namespace = 'namespace'
+        target = Target(function=stub_function, registry_namespace=stub_namespace)
+
+        # target._function assigned correctly
+        assert target._function is stub_function
+
+        # target._registry_namespace assigned correctly
+        assert target._registry_namespace is stub_namespace
+
+        # target._metadata assigned correctly...
+        assert target._metadata is MockTargetMetaData.from_target_function.return_value
+
+        # ... and the value was created correctly
+        assert MockTargetMetaData.from_target_function.call_args_list == [
+            mock.call(
+                function=stub_function,
+                registry_namespace=stub_namespace,
+            ),
+        ]
 
 
 class TestRegistry:
