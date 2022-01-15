@@ -43,16 +43,13 @@ class TestTargetMetaData:
         # are correctly generated using the function name (and registry_namespace)
         dummy_registry_namespace = make_random_string()
 
-        def stub_function():
-            pass
-
         metadata = TargetMetaData.from_target_function(
-            function=stub_function,
+            function=lambda: ...,
             registry_namespace=dummy_registry_namespace,
         )
 
-        assert metadata.function_name == 'stub_function'
-        assert metadata.registry_namespace == dummy_registry_namespace
+        assert metadata.function_name == '<lambda>'
+        assert metadata.registry_namespace is dummy_registry_namespace
 
     def test_from_target_name(self, make_random_string):
         dummy_function_name = make_random_string()
@@ -66,7 +63,7 @@ class TestTargetMetaData:
         assert metadata.function_name == dummy_function_name
         assert metadata.registry_namespace == dummy_registry_namespace
 
-# noqa: E731
+
 class TestTarget:
 
     @mock.patch('begin.registry.TargetMetaData')
