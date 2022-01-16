@@ -27,7 +27,7 @@ class TargetTreeConfig:
 
 
 @pytest.fixture(scope='function')
-def setup_targets_files(tmp_path):
+def target_file_tmp_tree(tmp_path):
     # Create a home directory and cwd directory in the tmp_path. These
     # should be used to monkeypatch Path.cwd and Path.home
     home_dir = tmp_path / 'home'
@@ -52,5 +52,9 @@ def setup_targets_files(tmp_path):
         'home/.begin/sub_dir/sub_dir_targets.py',
     ]
     expected_target_files = [tmp_path.joinpath(subpath) for subpath in expected_target_subpaths]
-    # TODO make it a dataclass
-    return home_dir, cwd_dir, expected_target_files
+
+    return TargetTreeConfig(
+        home_dir=home_dir,
+        cwd_dir=cwd_dir,
+        expected_target_files=expected_target_files,
+    )
