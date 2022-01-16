@@ -134,5 +134,5 @@ class TestTarget:
         assert return_value is None
 
 
-class TestRegistry:
+class TestTargetMap:
     pass
