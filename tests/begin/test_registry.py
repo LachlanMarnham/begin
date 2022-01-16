@@ -89,8 +89,14 @@ class TestTarget:
             ),
         ]
 
-    def test_key(self):
-        pass
+    @mock.patch('begin.registry.TargetMetaData')
+    def test_key(self, MockTargetMetaData):
+        target = Target(
+            function=lambda: ...,
+            registry_namespace='namespace',
+        )
+        mock_metadata = MockTargetMetaData.from_target_function.return_value
+        assert target.key is mock_metadata
 
     def test_registry_namespace(self):
         pass
