@@ -1,10 +1,11 @@
 import random
-import string
-from pathlib import Path
 import shutil
-import pytest
+import string
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
+
+import pytest
 
 
 @pytest.fixture(scope='function')
@@ -34,7 +35,7 @@ def target_file_tmp_tree(tmp_path):
     cwd_dir = tmp_path / 'cwd'
 
     # tests/resources/target_files contains two directories, home and cwd.
-    # These contain a bunch of targets files, plus a bunch of files which 
+    # These contain a bunch of targets files, plus a bunch of files which
     # are not valid target files
     resources = Path(__file__).parent.joinpath('resources/target_files')
     shutil.copytree(resources / 'home', home_dir)
