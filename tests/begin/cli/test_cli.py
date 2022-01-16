@@ -1,4 +1,6 @@
+import inspect
 import logging
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -54,3 +56,17 @@ class TestCli:
 
         # The process should exit with code 0
         assert e_info.value.code is ExitCodeEnum.SUCCESS.value
+
+    @mock.patch('begin.cli.cli.Path.home')
+    @mock.patch('begin.cli.cli.Path.cwd')
+    def test_get_targets_paths(self, mock_cwd, mock_home, target_file_tmp_tree):
+        mock_cwd.return_value = target_file_tmp_tree.cwd_dir
+        mock_home.return_value = target_file_tmp_tree.home_dir
+        target_paths_gen = cli.get_targets_paths()
+
+        # target_paths_gen should be a generator
+        assert inspect.isgenerator(target_paths_gen)
+
+        # get_targets_paths should collect the correct paths
+        target_paths = set(target_paths_gen)
+        assert target_paths == set(target_file_tmp_tree.expected_target_files)
