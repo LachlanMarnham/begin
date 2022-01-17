@@ -157,6 +157,18 @@ class TestTargetMap:
         assert mock_compile.call_args_list == [mock.call()]
 
     def test_get(self):
+        target_stub = object()
+        mock_map = {
+            'my_target': {
+                'my_namespace': target_stub,
+            },
+        }
+        target_map = TargetMap([])
+        target_map._map = mock_map
+
+        assert target_map.get(target_name='my_target', namespace='my_namespace') is target_stub
+
+    def test_add(self):
         def stub_target():
             pass
 
@@ -170,10 +182,7 @@ class TestTargetMap:
         target_map = TargetMap([])
         target_map.add(target)
 
-        assert target_map.get(target_name='stub_target', namespace=stub_namespace) is target
-
-    def test_add(self):
-        pass
+        assert target_map._map['stub_target']['stub_namespace'] is target
 
     def test_unpack_registry(self):
         pass
