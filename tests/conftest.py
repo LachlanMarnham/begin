@@ -8,6 +8,8 @@ from unittest import mock
 
 import pytest
 
+from begin.registry import Registry
+
 
 @pytest.fixture(scope='function')
 def make_random_string():
@@ -79,5 +81,10 @@ def target_file_tmp_tree(tmp_path):
 
 @pytest.fixture(scope='function')
 def registry_list(make_random_dir_path):
-    import pdb; pdb.set_trace()
-    print(make_random_dir_path)
+    registry_list = []
+    for _ in range(10):
+        _mock_get_calling_context_path = lambda _: make_random_dir_path()
+        with mock.patch.object(Registry, '_get_calling_context_path', _mock_get_calling_context_path):
+            new_registry = Registry()
+        registry_list.append(new_registry)
+    return registry_list
