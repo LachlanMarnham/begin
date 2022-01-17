@@ -58,3 +58,7 @@ class TargetFactory(AbstractFactory):
             function=function,
             registry_namespace=registry_namespace,
         )
+
+
+class Factory:
+    target = TargetFactory
