@@ -69,8 +69,10 @@ def make_random_dir_path() -> Path:
 class TargetFactory(AbstractFactory):
 
     @staticmethod
-    def create(function=None, registry_namespace=None):
-        function = function or create_function()
+    def create(function=None, registry_namespace=None, function_name=None):
+        """ Creates an instance of Target, given the target function and a
+        namespace."""
+        function = function or create_function(function_name)
         registry_namespace = registry_namespace or make_random_string()
 
         return Target(

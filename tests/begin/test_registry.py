@@ -168,21 +168,18 @@ class TestTargetMap:
 
         assert target_map.get(target_name='my_target', namespace='my_namespace') is target_stub
 
-    def test_add(self):
-        def stub_target():
-            pass
-
-        stub_namespace = 'stub_namespace'
-
-        target = Target(
-            function=stub_target,
-            registry_namespace=stub_namespace,
+    def test_add(self, resource_factory):
+        function_name = 'fake_name'
+        namespace = 'fake_namespace'
+        target_stub = resource_factory.target.create(
+            function_name=function_name,
+            registry_namespace=namespace,
         )
 
         target_map = TargetMap([])
-        target_map.add(target)
+        target_map.add(target_stub)
 
-        assert target_map._map['stub_target']['stub_namespace'] is target
+        assert target_map._map[function_name][namespace] is target_stub
 
     def test_unpack_registry(self):
         pass
