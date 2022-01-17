@@ -147,7 +147,7 @@ class TestTargetMap:
     def test_create(self, registry_list):
         with mock.patch.object(TargetMap, 'compile') as mock_compile:
             target_map = TargetMap.create(registry_list)
-        
+
         # test_create is a factory method which creates and initialises
         # a TargetMap instance...
         assert isinstance(target_map, TargetMap)
