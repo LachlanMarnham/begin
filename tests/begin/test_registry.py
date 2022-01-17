@@ -172,6 +172,20 @@ class TestTargetMap:
 
         assert target_map.get(target_name='stub_target', namespace=stub_namespace) is target
 
+    def test_add(self):
+        pass
+
+    def test_unpack_registry(self):
+        pass
+
+    def test_compile(self, registry_list):
+        with mock.patch.object(TargetMap, 'unpack_registry') as mock_unpack_registry:
+            target_map = TargetMap(registry_list)
+            target_map.compile()
+
+        # TargetMap.compile should defer to TargetMap.unpack_registry once for each registry
+        assert mock_unpack_registry.call_args_list == [mock.call(r) for r in registry_list]
+
 
 class TestRegistry:
 
