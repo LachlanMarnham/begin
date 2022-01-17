@@ -19,6 +19,8 @@ from begin.registry import (
 logger = logging.getLogger(__name__)
 
 
+# TODO make $HOME/.begin overwriteable as global targets dir
+# TODO make *targets.py overwriteable as target file extension
 def collect_target_file_paths() -> Iterator[Path]:
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
