@@ -32,17 +32,25 @@ def make_random_function_name():
 
 
 def create_function(fn_name=None):
+    print('create_function')
     fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
     function = locals()[fn_name]
     return function
 
 
+def create_random_string():
+    'hello'
+
+
 class TargetFactory(AbstractFactory):
 
     @staticmethod
-    def create(**kwargs):
+    def create(function=None, registry_namespace=None):
+        function = function or create_function()
+        registry_namespace = registry_namespace or create_random_string()
+
         return Target(
-            function=kwargs.get('function'),
-            registry_namespace=kwargs.get('registry_namespace'),
+            function=function,
+            registry_namespace=registry_namespace,
         )
