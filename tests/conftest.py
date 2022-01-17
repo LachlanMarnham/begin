@@ -4,6 +4,7 @@ import string
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
+from unittest import mock
 
 import pytest
 
@@ -18,6 +19,21 @@ def make_random_string():
         random_string = ''.join(random.choice(characters) for _ in range(string_length))
         return random_string
     return _make_random_string
+
+
+@pytest.fixture(scope='function')
+def make_random_dir_path():
+    def _make_random_dir_path():
+        characters = string.ascii_letters + string.digits
+        tree_depth = random.randint(2, 5)
+        dirs = []
+        for _ in range(tree_depth):
+            string_length = random.randint(1, 10)
+            random_string = ''.join(random.choice(characters) for _ in range(string_length))
+            dirs.append(random_string)
+        dir_str = '/' + '/'.join(dirs)
+        return Path(dir_str)
+    return _make_random_dir_path
 
 
 @dataclass
@@ -59,3 +75,9 @@ def target_file_tmp_tree(tmp_path):
         cwd_dir=cwd_dir,
         expected_target_files=expected_target_files,
     )
+
+
+@pytest.fixture(scope='function')
+def registry_list(make_random_dir_path):
+    import pdb; pdb.set_trace()
+    print(make_random_dir_path)
