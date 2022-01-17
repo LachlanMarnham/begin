@@ -19,7 +19,7 @@ from begin.registry import (
 logger = logging.getLogger(__name__)
 
 
-def get_target_file_paths() -> Iterator[Path]:
+def collect_target_file_paths() -> Iterator[Path]:
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
     global_targets_dir = Path.home().joinpath('.begin')
@@ -50,7 +50,7 @@ def get_registries_for_module(module: ModuleType) -> List[Registry]:
 
 def load_registries() -> List[Registry]:
     registries = []
-    for path in get_target_file_paths():
+    for path in collect_target_file_paths():
         module = load_module_from_path(path)
         registries_for_module = get_registries_for_module(module)
         registries.extend(registries_for_module)
