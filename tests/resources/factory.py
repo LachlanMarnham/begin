@@ -5,17 +5,16 @@ from abc import (
     abstractmethod,
 )
 from pathlib import Path
-from typing import Callable
+from typing import (
+    Callable,
+    List,
+    Optional,
+)
 
-from begin.registry import Target
-
-
-class AbstractFactory(metaclass=ABCMeta):
-
-    @staticmethod
-    @abstractmethod
-    def create(self):
-        pass
+from begin.registry import (
+    Registry,
+    Target,
+)
 
 
 def make_random_function_name() -> str:
@@ -66,10 +65,27 @@ def make_random_dir_path() -> Path:
     return Path(dir_str)
 
 
+def make_random_targets_file_path() -> Path:
+    random_dir = make_random_dir_path()
+    targets_file = random_dir.joinpath('targets.py')
+    return targets_file
+
+
+class AbstractFactory(metaclass=ABCMeta):
+
+    @abstractmethod
+    def create(self):
+        pass
+
+
 class TargetFactory(AbstractFactory):
 
-    @staticmethod
-    def create(function=None, registry_namespace=None, function_name=None):
+    def create(
+        self,
+        function: Optional[Callable] = None,
+        registry_namespace: Optional[str] = None,
+        function_name: Optional[str] = None,
+    ) -> Target:
         """ Creates an instance of Target, given the target function and a
         namespace."""
         function = function or create_function(function_name)
@@ -80,6 +96,44 @@ class TargetFactory(AbstractFactory):
             registry_namespace=registry_namespace,
         )
 
+    def create_multi(
+        self,
+        target_count: Optional[int] = None,
+        registry_namespace: Optional[str] = None,
+    ) -> List[Target]:
+        """ Creates a list of Target instance. The list has length target_count,
+        but if target_count is not provided the length will be some random int between
+        1 and 10 inclusive. If the registry_namespace is provided all targets will
+        have the same namespace, otherwise each target will have a randomly-generated
+        namespace. """
+        target_count = target_count or random.randint(1, 10)
+        targets = []
+        for _ in range(target_count):
+            new_target = self.create(registry_namespace=registry_namespace)
+            targets.append(new_target)
+        return targets
+
+
+class RegistryFactory(AbstractFactory):
+
+    def __init__(self):
+        self.target_factory = TargetFactory()
+
+    def create(
+        self,
+        name: Optional[str] = None,
+        targets: Optional[List[Target]] = None,
+        calling_context_path: Optional[Path] = None,
+    ) -> Registry:
+        name = name or make_random_string()
+        registry = Registry(name)
+        registry.path = calling_context_path or make_random_targets_file_path()
+        targets = targets or self.target_factory.create_multi(registry_namespace=name)
+        for target in targets:
+            registry.register_target(target)
+        return registry
+
 
 class Factory:
-    target = TargetFactory
+    target = TargetFactory()
+    registry = RegistryFactory()
