@@ -36,14 +36,21 @@ def load_module_from_path(path: Path) -> ModuleType:
     return module
 
 
+def get_registries_for_module(module: ModuleType) -> List[Registry]:
+    registries_in_module = []
+    for attribute_name in dir(module):
+        attribute = getattr(module, attribute_name)
+        if isinstance(attribute, Registry):
+            registries_in_module.append(attribute)
+    return registries_in_module
+
+
 def load_registries() -> List[Registry]:
     registries = []
     for path in get_target_file_paths():
         module = load_module_from_path(path)
-        for attribute_name in dir(module):
-            attribute = getattr(module, attribute_name)
-            if isinstance(attribute, Registry):
-                registries.append(attribute)
+        registries_for_module = get_registries_for_module(module)
+        registries.extend(registries_for_module)
     return registries
 
 
