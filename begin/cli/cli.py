@@ -1,7 +1,9 @@
 import importlib.util
 import logging
 import sys
+from importlib.machinery import ModuleSpec
 from pathlib import Path
+from types import ModuleType
 from typing import List
 
 from begin.exceptions import BeginError
@@ -22,12 +24,22 @@ def get_target_file_paths():
         yield from global_targets_dir.rglob('*targets.py')
 
 
+def load_module_from_path(path: Path) -> ModuleType:
+    # Create a ModuleSpec instance based on the path to the file
+    spec: ModuleSpec = importlib.util.spec_from_file_location(path.stem, path)
+
+    # Create a new module based on spec
+    module = importlib.util.module_from_spec(spec)
+
+    # Execute the module in its own namespace
+    spec.loader.exec_module(module)  # type: ignore
+    return module
+
+
 def load_registries() -> List[Registry]:
     registries = []
     for path in get_target_file_paths():
-        spec = importlib.util.spec_from_file_location('module.name', path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        module = load_module_from_path(path)
         for attribute_name in dir(module):
             attribute = getattr(module, attribute_name)
             if isinstance(attribute, Registry):
