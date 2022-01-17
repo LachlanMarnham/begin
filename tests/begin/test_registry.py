@@ -156,6 +156,22 @@ class TestTargetMap:
         # ... but it also calls TargetMap.compile
         assert mock_compile.call_args_list == [mock.call()]
 
+    def test_get(self):
+        def stub_target():
+            pass
+
+        stub_namespace = 'stub_namespace'
+
+        target = Target(
+            function=stub_target,
+            registry_namespace=stub_namespace,
+        )
+
+        target_map = TargetMap([])
+        target_map.add(target)
+
+        assert target_map.get(target_name='stub_target', namespace=stub_namespace) is target
+
 
 class TestRegistry:
 

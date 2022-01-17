@@ -141,8 +141,8 @@ class TargetMap:
         else:
             self._map[target_name][namespace] = target
 
-    def get(self, target, namespace):
-        return self._map[target][namespace]
+    def get(self, target_name, namespace):
+        return self._map[target_name][namespace]
 
 
 class RegistryManager:
@@ -161,5 +161,5 @@ class RegistryManager:
         if colliding_namespaces:
             raise RegistryNameCollisionError(colliding_namespaces=colliding_namespaces)
 
-    def get_target(self, requested_target, requested_namespace):
-        return self._target_map.get(requested_target, requested_namespace)
+    def get_target(self, requested_target_name, requested_namespace):
+        return self._target_map.get(requested_target_name, requested_namespace)
