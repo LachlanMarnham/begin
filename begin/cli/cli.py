@@ -2,6 +2,7 @@ import importlib.util
 import logging
 import sys
 from pathlib import Path
+from typing import List
 
 from begin.exceptions import BeginError
 from begin.registry import (
@@ -21,17 +22,17 @@ def get_targets_paths():
         yield from global_targets_dir.rglob('*targets.py')
 
 
-def load_registries():
-    targets = []
+def load_registries() -> List[Registry]:
+    registries = []
     for path in get_targets_paths():
         spec = importlib.util.spec_from_file_location('module.name', path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        for item in dir(module):
-            attribute = getattr(module, item)
+        for attribute_name in dir(module):
+            attribute = getattr(module, attribute_name)
             if isinstance(attribute, Registry):
-                targets.append(attribute)
-    return targets
+                registries.append(attribute)
+    return registries
 
 
 def _main():
