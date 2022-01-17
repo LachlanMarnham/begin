@@ -1,9 +1,9 @@
+import random
+import string
 from abc import (
     ABCMeta,
     abstractmethod,
 )
-import string
-import random
 
 from begin.registry import Target
 
@@ -32,8 +32,11 @@ def make_random_function_name():
 
 
 def create_function(fn_name=None):
-    fn_name = fn_name if fn_name is not None else make_random_function_name()
+    fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
+    function = locals()[fn_name]
+    return function
+
 
 class TargetFactory(AbstractFactory):
 
@@ -43,8 +46,3 @@ class TargetFactory(AbstractFactory):
             function=kwargs.get('function'),
             registry_namespace=kwargs.get('registry_namespace'),
         )
-
-# function_name = 'abc'
-# exec(f'def {function_name}(): pass')
-# fn = locals()['abc']
-import pdb; pdb.set_trace()
