@@ -156,8 +156,8 @@ class TestTargetMap:
         # ... but it also calls TargetMap.compile
         assert mock_compile.call_args_list == [mock.call()]
 
-    def test_get(self):
-        target_stub = object()
+    def test_get(self, resource_factory):
+        target_stub = resource_factory.target.create()
         mock_map = {
             'my_target': {
                 'my_namespace': target_stub,
