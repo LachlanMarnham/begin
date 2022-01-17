@@ -6,7 +6,7 @@ registry = Registry()
 # registry_3 = Registry(name='global')
 
 
-@registry.register_target(name='install')
+@registry.register_target
 def install():
     print('default install')
 
