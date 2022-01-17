@@ -81,9 +81,11 @@ class Registry:
 
     def register_target(self, *args, **kwargs):
         if args:
-            function = args.pop()
+            # For calls like @registry.register_target
+            function = args[0]
             self._register_target(function)
         else:
+            # For calls like @registry.register_target(...)
             def decorator(function):
                 self._register_target(function, **kwargs)
                 return function
