@@ -32,15 +32,19 @@ def make_random_function_name():
 
 
 def create_function(fn_name=None):
-    print('create_function')
     fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
     function = locals()[fn_name]
     return function
 
 
-def create_random_string():
-    'hello'
+def make_random_string(no_whitespace=False):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    if not no_whitespace:
+        characters += string.whitespace
+    string_length = random.randint(1, 100)
+    random_string = ''.join(random.choice(characters) for _ in range(string_length))
+    return random_string
 
 
 class TargetFactory(AbstractFactory):
@@ -48,7 +52,7 @@ class TargetFactory(AbstractFactory):
     @staticmethod
     def create(function=None, registry_namespace=None):
         function = function or create_function()
-        registry_namespace = registry_namespace or create_random_string()
+        registry_namespace = registry_namespace or make_random_string()
 
         return Target(
             function=function,
