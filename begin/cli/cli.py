@@ -4,7 +4,10 @@ import sys
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from types import ModuleType
-from typing import List
+from typing import (
+    Iterator,
+    List,
+)
 
 from begin.exceptions import BeginError
 from begin.registry import (
@@ -16,7 +19,7 @@ from begin.registry import (
 logger = logging.getLogger(__name__)
 
 
-def get_target_file_paths():
+def get_target_file_paths() -> Iterator[Path]:
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
     global_targets_dir = Path.home().joinpath('.begin')
