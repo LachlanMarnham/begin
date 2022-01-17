@@ -144,6 +144,18 @@ class TestTargetMap:
         assert target_map._registries is registry_list
         assert target_map._map == {}
 
+    def test_create(self, registry_list):
+        with mock.patch.object(TargetMap, 'compile') as mock_compile:
+            target_map = TargetMap.create(registry_list)
+        
+        # test_create is a factory method which creates and initialises
+        # a TargetMap instance...
+        assert isinstance(target_map, TargetMap)
+        assert target_map._registries is registry_list
+
+        # ... but it also calls TargetMap.compile
+        assert mock_compile.call_args_list == [mock.call()]
+
 
 class TestRegistry:
 
