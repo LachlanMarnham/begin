@@ -14,7 +14,7 @@ from begin.registry import (
 logger = logging.getLogger(__name__)
 
 
-def get_targets_paths():
+def get_target_file_paths():
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
     global_targets_dir = Path.home().joinpath('.begin')
@@ -24,7 +24,7 @@ def get_targets_paths():
 
 def load_registries() -> List[Registry]:
     registries = []
-    for path in get_targets_paths():
+    for path in get_target_file_paths():
         spec = importlib.util.spec_from_file_location('module.name', path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
