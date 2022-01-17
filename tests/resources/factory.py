@@ -122,13 +122,13 @@ class RegistryFactory(AbstractFactory):
     def create(
         self,
         name: Optional[str] = None,
-        targets: Optional[List[Target]] = None,
+        target_functions: Optional[List[Callable]] = None,
         calling_context_path: Optional[Path] = None,
     ) -> Registry:
         name = name or make_random_string()
         registry = Registry(name)
         registry.path = calling_context_path or make_random_targets_file_path()
-        targets = targets or self.target_factory.create_multi(registry_namespace=name)
+        targets = target_functions or [create_function() for _ in range(10)]
         for target in targets:
             registry.register_target(target)
         return registry
