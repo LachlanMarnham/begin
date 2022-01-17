@@ -1,7 +1,10 @@
+from pathlib import Path
 from unittest import mock
 
 from begin.registry import (
+    Registry,
     Target,
+    TargetMap,
     TargetMetaData,
 )
 
@@ -135,4 +138,17 @@ class TestTarget:
 
 
 class TestTargetMap:
-    pass
+
+    def test_initialisation(self, registry_list):
+        target_map = TargetMap(registry_list)
+        assert target_map._registries is registry_list
+        assert target_map._map == {}
+
+
+class TestRegistry:
+
+    def test_get_calling_context_path(self):
+        # Registry._get_calling_context_path returns the pathlib.Path
+        # of the file in which that function is called.
+        calling_path = Registry._get_calling_context_path()
+        assert calling_path == Path(__file__)
