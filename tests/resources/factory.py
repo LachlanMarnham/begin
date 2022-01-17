@@ -33,14 +33,14 @@ def make_random_function_name() -> str:
     return function_name
 
 
-def create_function(fn_name: str=None) -> Callable:
+def create_function(fn_name: str = None) -> Callable:
     fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
     function = locals()[fn_name]
     return function
 
 
-def make_random_string(no_whitespace: bool=False) -> str:
+def make_random_string(no_whitespace: bool = False) -> str:
     characters = string.ascii_letters + string.digits + string.punctuation
     if not no_whitespace:
         characters += string.whitespace
