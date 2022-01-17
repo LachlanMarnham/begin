@@ -1,6 +1,4 @@
-import random
 import shutil
-import string
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
@@ -19,17 +17,7 @@ def make_random_string():
 
 @pytest.fixture(scope='function')
 def make_random_dir_path():
-    def _make_random_dir_path():
-        characters = string.ascii_letters + string.digits
-        tree_depth = random.randint(2, 5)
-        dirs = []
-        for _ in range(tree_depth):
-            string_length = random.randint(1, 10)
-            random_string = ''.join(random.choice(characters) for _ in range(string_length))
-            dirs.append(random_string)
-        dir_str = '/' + '/'.join(dirs)
-        return Path(dir_str)
-    return _make_random_dir_path
+    return factory.make_random_dir_path
 
 
 @dataclass
