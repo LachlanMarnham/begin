@@ -322,3 +322,10 @@ class TestRegistryManager:
         assert registry_namespace in error_message
         assert str(path_name_1) in error_message
         assert str(path_name_2) in error_message
+
+    def test_create(self, resource_factory):
+        registries = resource_factory.registry.create_multi()
+        with mock.patch.object(RegistryManager, 'find_namespace_collisions') as mock_fnc:
+            manager = RegistryManager.create(registries)
+        assert mock_fnc.call_args_list == [mock.call(registries)]
+        assert isinstance(manager, RegistryManager)
