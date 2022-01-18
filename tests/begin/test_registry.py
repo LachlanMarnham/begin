@@ -283,10 +283,8 @@ class TestRegistryManager:
 
     def test_initialisation(self, resource_factory):
         registries = resource_factory.registry.create_multi()
-        with mock.patch.object(RegistryManager, 'find_namespace_collisions') as mock_find_namespace_collisions:
-            with mock.patch('begin.registry.TargetMap.create') as mock_target_map_create:
-                RegistryManager(registries)
-        assert mock_find_namespace_collisions.call_args_list == [mock.call(registries)]
+        with mock.patch('begin.registry.TargetMap.create') as mock_target_map_create:
+            RegistryManager(registries)
         assert mock_target_map_create.call_args_list == [mock.call(registries)]
 
     def test_find_namespace_collisions_success(self, resource_factory):
@@ -324,3 +322,20 @@ class TestRegistryManager:
         assert registry_namespace in error_message
         assert str(path_name_1) in error_message
         assert str(path_name_2) in error_message
+
+    def test_create(self, resource_factory):
+        registries = resource_factory.registry.create_multi()
+        with mock.patch.object(RegistryManager, 'find_namespace_collisions') as mock_fnc:
+            manager = RegistryManager.create(registries)
+        assert mock_fnc.call_args_list == [mock.call(registries)]
+        assert isinstance(manager, RegistryManager)
+
+    def test_get_target(self):
+        stub_target_name = 'stub_target_name'
+        stub_namespace = 'stub_namespace'
+
+        manager = RegistryManager([])
+        with mock.patch.object(manager, '_target_map') as mock_target_map:
+            manager.get_target(stub_target_name, stub_namespace)
+
+        assert mock_target_map.get.call_args_list == [mock.call(stub_target_name, stub_namespace)]
