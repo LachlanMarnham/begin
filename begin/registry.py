@@ -136,6 +136,8 @@ class TargetMap:
 
     def add(self, target):
         # TODO revisit this, preferably without using nested defaultdicts
+        # TODO target_name and function_name are used interchangeably throughout
+        # the repo and should be cleaned up
         target_name = target.function_name
         namespace = target.registry_namespace
         if target_name not in self._map:

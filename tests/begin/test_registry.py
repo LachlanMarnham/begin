@@ -183,6 +183,30 @@ class TestTargetMap:
 
         assert target_map._map[function_name][namespace] is target_stub
 
+    def test_add_targets_with_same_function_name(self, resource_factory):
+        # Create two targets with the same name in different namespaces
+        function_name = 'install'
+        namespace_1 = 'default'
+        target_1 = resource_factory.target.create(
+            function_name=function_name,
+            registry_namespace=namespace_1,
+        )
+        namespace_2 = 'global'
+        target_2 = resource_factory.target.create(
+            function_name=function_name,
+            registry_namespace=namespace_2,
+        )
+
+        # Add them both to a TargetMap
+        target_map = TargetMap([])
+        target_map.add(target_1)
+        target_map.add(target_2)
+
+        # Both targets should be listed under the same function_name
+        assert len(target_map._map[function_name]) == 2
+        assert target_map._map[function_name][namespace_1] is target_1
+        assert target_map._map[function_name][namespace_2] is target_2
+
     def test_unpack_registry(self, resource_factory):
         registry = resource_factory.registry.create()
         target_map = TargetMap([])
@@ -191,7 +215,6 @@ class TestTargetMap:
         # TODO when registry.targets becomes a list, the assert should be a comparison like:
         # assert mock_add.call_args_list = [mock.call(r) for r in registry.targets]
         assert mock_add.call_args_list == [mock.call(r) for _, r in registry.targets.items()]
-
 
     def test_compile(self, resource_factory):
         registry_list = resource_factory.registry.create_multi()
