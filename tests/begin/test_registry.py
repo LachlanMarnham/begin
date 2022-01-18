@@ -211,3 +211,23 @@ class TestRegistry:
         # of the file in which that function is called.
         calling_path = Registry._get_calling_context_path()
         assert calling_path == Path(__file__)
+
+    def test_register_target_no_kwargs(self):
+        registry = Registry()
+
+        with mock.patch.object(registry, '_register_target') as mock_register:
+            @registry.register_target
+            def foo():
+                pass
+            assert mock_register.call_args_list == [mock.call(foo)]
+
+    def test_register_target_with_kwargs(self):
+        registry = Registry()
+        options = {'key': 'value'}
+
+        with mock.patch.object(registry, '_register_target') as mock_register:
+            @registry.register_target(**options)
+            def foo():
+                pass
+
+            assert mock_register.call_args_list == [mock.call(foo, key='value')]
