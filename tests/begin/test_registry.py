@@ -3,6 +3,7 @@ from unittest import mock
 
 from begin.registry import (
     Registry,
+    RegistryManager,
     Target,
     TargetMap,
     TargetMetaData,
@@ -273,3 +274,14 @@ class TestRegistry:
             # Registry.get_target should return the manually-unpacked target by
             # function name and namespace
             assert registry.get_target(function_name, registry_namespace) is target
+
+
+class TestRegistryManager:
+
+    def test_initialisation(self, resource_factory):
+        registries = resource_factory.registry.create_multi()
+        with mock.patch.object(RegistryManager, 'find_namespace_collisions') as mock_find_namespace_collisions:
+            with mock.patch('begin.registry.TargetMap.create') as mock_target_map_create:
+                RegistryManager(registries)
+        assert mock_find_namespace_collisions.call_args_list == [mock.call(registries)]
+        assert mock_target_map_create.call_args_list == [mock.call(registries)]
