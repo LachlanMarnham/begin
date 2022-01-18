@@ -35,7 +35,7 @@ class TargetMetaData:
 
 
 class Target:
-    # TODO add __repr__ and __hash__ so Registry.targets can be a set
+
     def __init__(self, function: Callable, registry_namespace: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
@@ -125,19 +125,11 @@ class TargetMap:
             self.unpack_registry(registry)
 
     def unpack_registry(self, registry):
-        # TODO target_metadata can probably be done away with:
-        #   1) don't get rid of metadata immediately as it may be useful
-        #   2) Registry._targets is a list
-        #   3) this loop becomes for target in targets
-        #   4) calls to add before should just use target.function_name and target.registry_namespace
         targets = registry.targets
         for _, target in targets.items():
             self.add(target)
 
     def add(self, target):
-        # TODO revisit this, preferably without using nested defaultdicts
-        # TODO target_name and function_name are used interchangeably throughout
-        # the repo and should be cleaned up
         target_name = target.function_name
         namespace = target.registry_namespace
         if target_name not in self._map:
@@ -157,9 +149,6 @@ class RegistryManager:
         self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
 
-    # TODO Should add a factory method which checks find_namespace_collisions
-    # before creating the instance. Then remove find_namespace_collisions
-    # from __init__
     @staticmethod
     def find_namespace_collisions(registries: List[Registry]) -> None:
         registry_path_map = defaultdict(list)

@@ -20,8 +20,6 @@ from begin.registry import (
 logger = logging.getLogger(__name__)
 
 
-# TODO make $HOME/.begin overwriteable as global targets dir
-# TODO make *targets.py overwriteable as target file extension
 def collect_target_file_paths() -> Iterator[Path]:
     cwd = Path.cwd()
     yield from cwd.rglob('*targets.py')
@@ -77,10 +75,3 @@ def main() -> NoReturn:
         sys.exit(ex.exit_code)
     else:
         sys.exit(0)
-
-
-# TODO
-# >>> begin install
-# The target `install` was found in multiple registries. Please select one to continue:
-# [1] default
-# [2] global
