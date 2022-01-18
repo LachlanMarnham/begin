@@ -14,3 +14,9 @@ def install():
 @registry.register_target(name='tests')
 def tests():
     print('default tests')
+
+
+@registry.register_target
+def tests_with_setup():
+    install()
+    tests()
