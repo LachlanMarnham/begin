@@ -231,3 +231,15 @@ class TestRegistry:
                 pass
 
             assert mock_register.call_args_list == [mock.call(foo, key='value')]
+
+    def test_get_target(self, resource_factory):
+        registry = resource_factory.registry.create()
+
+        # Manually unpack the targets from the registry
+        for target_metadata, target in registry.targets.items():
+            function_name = target_metadata.function_name
+            registry_namespace = target_metadata.registry_namespace
+
+            # Registry.get_target should return the manually-unpacked target by
+            # function name and namespace
+            assert registry.get_target(function_name, registry_namespace) is target
