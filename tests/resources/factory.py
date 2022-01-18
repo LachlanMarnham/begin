@@ -6,6 +6,7 @@ from abc import (
 )
 from pathlib import Path
 from typing import (
+    Any,
     Callable,
     List,
     Optional,
@@ -32,7 +33,7 @@ def make_random_function_name() -> str:
     return function_name
 
 
-def create_function(fn_name: str = None) -> Callable:
+def create_function(fn_name: Optional[str] = None) -> Callable:
     fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
     function = locals()[fn_name]
@@ -74,7 +75,7 @@ def make_random_targets_file_path() -> Path:
 class AbstractFactory(metaclass=ABCMeta):
 
     @abstractmethod
-    def create(self):
+    def create(self) -> Any:
         pass
 
 
@@ -116,7 +117,7 @@ class TargetFactory(AbstractFactory):
 
 class RegistryFactory(AbstractFactory):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.target_factory = TargetFactory()
 
     def create(
