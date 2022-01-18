@@ -2,11 +2,9 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
-from unittest import mock
 
 import pytest
 
-from begin.registry import Registry
 from tests.resources import factory
 
 
@@ -25,6 +23,7 @@ class TargetTreeConfig:
     home_dir: Path
     cwd_dir: Path
     expected_target_files: List[Path]
+    file_with_registry: Path
 
 
 @pytest.fixture(scope='function')
@@ -54,10 +53,15 @@ def target_file_tmp_tree(tmp_path):
     ]
     expected_target_files = [tmp_path.joinpath(subpath) for subpath in expected_target_subpaths]
 
+    # This particular file actually has a Registry instance in it, with a single
+    # target.
+    file_with_registry = tmp_path.joinpath('home/.begin/targets.py')
+
     return TargetTreeConfig(
         home_dir=home_dir,
         cwd_dir=cwd_dir,
         expected_target_files=expected_target_files,
+        file_with_registry=file_with_registry,
     )
 
 

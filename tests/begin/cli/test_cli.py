@@ -69,3 +69,12 @@ class TestCli:
         # collect_target_file_paths should collect the correct paths
         target_paths = set(target_paths_gen)
         assert target_paths == set(target_file_tmp_tree.expected_target_files)
+
+
+def test_load_module_from_path(target_file_tmp_tree):
+    # target_file_tmp_tree.file_with_registry is the path of a targets file
+    # which actually contains a registry with a single target, called install.
+    module = cli.load_module_from_path(target_file_tmp_tree.file_with_registry)
+
+    # The loaded module should expose attributes like any imported module
+    assert module.registry.name == 'global'
