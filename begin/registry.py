@@ -35,6 +35,7 @@ class TargetMetaData:
 
 
 class Target:
+    # TODO add __repr__ and __hash__ so Registry.targets can be a set
     def __init__(self, function: Callable, registry_namespace: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace

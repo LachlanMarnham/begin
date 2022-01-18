@@ -183,8 +183,15 @@ class TestTargetMap:
 
         assert target_map._map[function_name][namespace] is target_stub
 
-    def test_unpack_registry(self):
-        pass
+    def test_unpack_registry(self, resource_factory):
+        registry = resource_factory.registry.create()
+        target_map = TargetMap([])
+        with mock.patch.object(target_map, 'add') as mock_add:
+            target_map.unpack_registry(registry)
+        # TODO when registry.targets becomes a list, the assert should be a comparison like:
+        # assert mock_add.call_args_list = [mock.call(r) for r in registry.targets]
+        assert mock_add.call_args_list == [mock.call(r) for _, r in registry.targets.items()]
+
 
     def test_compile(self, resource_factory):
         registry_list = resource_factory.registry.create_multi()
