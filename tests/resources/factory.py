@@ -101,7 +101,7 @@ class TargetFactory(AbstractFactory):
         target_count: Optional[int] = None,
         registry_namespace: Optional[str] = None,
     ) -> List[Target]:
-        """ Creates a list of Target instance. The list has length target_count,
+        """ Creates a list of Target instances. The list has length target_count,
         but if target_count is not provided the length will be some random int between
         1 and 10 inclusive. If the registry_namespace is provided all targets will
         have the same namespace, otherwise each target will have a randomly-generated
@@ -125,13 +125,30 @@ class RegistryFactory(AbstractFactory):
         target_functions: Optional[List[Callable]] = None,
         calling_context_path: Optional[Path] = None,
     ) -> Registry:
+        """ Create a Registry instance. If name is not provided, the registry namespace
+        will be generated at random. If the calling_context_path is not provided, it will
+        be generated at random. If a list of target_functions are not provided, a random
+        list will be generated with length between 1 and 10 inclusive. """
         name = name or make_random_string()
         registry = Registry(name)
         registry.path = calling_context_path or make_random_targets_file_path()
-        targets = target_functions or [create_function() for _ in range(10)]
-        for target in targets:
-            registry.register_target(target)
+        if target_functions is None:
+            fn_list_len = random.randint(1, 10)
+            target_functions = [create_function() for _ in range(fn_list_len)]
+        for function in target_functions:
+            registry.register_target(function)
         return registry
+
+    def create_multi(self, registry_count: Optional[int] = None) -> List[Registry]:
+        """ Creates a list of Registry instances. The list has length registry_count,
+        but if registry_count is not provided the length will be some random int between
+        1 and 10 inclusive. """
+        registry_count = registry_count or random.randint(1, 10)
+        registries = []
+        for _ in range(registry_count):
+            new_registry = self.create()
+            registries.append(new_registry)
+        return registries
 
 
 class Factory:
