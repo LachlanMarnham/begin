@@ -139,12 +139,14 @@ class TestTarget:
 
 class TestTargetMap:
 
-    def test_initialisation(self, registry_list):
+    def test_initialisation(self, resource_factory):
+        registry_list = resource_factory.registry.create_multi()
         target_map = TargetMap(registry_list)
         assert target_map._registries is registry_list
         assert target_map._map == {}
 
-    def test_create(self, registry_list):
+    def test_create(self, resource_factory):
+        registry_list = resource_factory.registry.create_multi()
         with mock.patch.object(TargetMap, 'compile') as mock_compile:
             target_map = TargetMap.create(registry_list)
 
@@ -184,7 +186,8 @@ class TestTargetMap:
     def test_unpack_registry(self):
         pass
 
-    def test_compile(self, registry_list):
+    def test_compile(self, resource_factory):
+        registry_list = resource_factory.registry.create_multi()
         with mock.patch.object(TargetMap, 'unpack_registry') as mock_unpack_registry:
             target_map = TargetMap(registry_list)
             target_map.compile()
