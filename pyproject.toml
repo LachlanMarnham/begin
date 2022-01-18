@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "begin-cli"
-version = "0.0.1"
+version = "0.1.0"
 description = "A utility for running targets in a targets.py file"
 authors = ["Lachlan Marnham"]
 maintainers = ["Lachlan Marnham"]
