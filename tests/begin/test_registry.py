@@ -198,6 +198,14 @@ class TestTargetMap:
 
 class TestRegistry:
 
+    def test_initialisation(self):
+        stub_registry_name = 'stub_registry_name'
+        with mock.patch.object(Registry, '_get_calling_context_path') as mock_gccp:
+            registry = Registry(name='stub_registry_name')
+        assert registry.name is stub_registry_name
+        assert registry.targets == {}
+        assert registry.path is mock_gccp.return_value
+
     def test_get_calling_context_path(self):
         # Registry._get_calling_context_path returns the pathlib.Path
         # of the file in which that function is called.
