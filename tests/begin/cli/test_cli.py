@@ -93,3 +93,14 @@ def test_get_registries_for_module(resource_factory):
     # order, so this assert is sensitive to the fact that that [registry_1, registry_2]
     # is an alphabetised list.
     assert result == [registry_1, registry_2]
+
+
+def test_load_registries(target_file_tmp_tree):
+    file = target_file_tmp_tree.file_with_registry
+    with mock.patch.object(cli, 'collect_target_file_paths', return_value=[file]) as mock_ctfp:
+        registries = cli.load_registries()
+    assert mock_ctfp.call_args_list == [mock.call()]
+    assert len(registries) == 1
+    registry = registries.pop()
+    assert registry.name == 'global'
+    assert registry.path == file
