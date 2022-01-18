@@ -78,3 +78,18 @@ def test_load_module_from_path(target_file_tmp_tree):
 
     # The loaded module should expose attributes like any imported module
     assert module.registry.name == 'global'
+
+
+def test_get_registries_for_module(resource_factory):
+    # Create a couple of registries and attach them to a mocked module
+    registry_1, registry_2 = resource_factory.registry.create_multi(registry_count=2)
+    mock_module = mock.Mock()
+    mock_module.registry_1 = registry_1
+    mock_module.registry_2 = registry_2
+    result = cli.get_registries_for_module(mock_module)
+
+    # Note: cli.get_registries_for_module builds the list of registries by
+    # iterating over dir(module). dir(module) returns results in alphabetical
+    # order, so this assert is sensitive to the fact that that [registry_1, registry_2]
+    # is an alphabetised list.
+    assert result == [registry_1, registry_2]
