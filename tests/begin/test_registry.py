@@ -1,6 +1,9 @@
 from pathlib import Path
 from unittest import mock
 
+import pytest
+
+from begin.exceptions import RegistryNameCollisionError
 from begin.registry import (
     Registry,
     RegistryManager,
@@ -285,3 +288,34 @@ class TestRegistryManager:
                 RegistryManager(registries)
         assert mock_find_namespace_collisions.call_args_list == [mock.call(registries)]
         assert mock_target_map_create.call_args_list == [mock.call(registries)]
+
+    def test_find_namespace_collisions_success(self, resource_factory):
+        # In this context, 'success' means there are no namespace collisions
+        registries = resource_factory.registry.create_multi()
+
+    def test_find_namespace_collisions_failure(self, resource_factory):
+        # In this context, 'failure' means there are namespace collisions
+        registry_namespace = 'colliding_namespace'
+        path_name_1 = Path('/path/to/foo.targets.py')
+        path_name_2 = Path('/path/to/bar.targets.py')
+
+        # Create two registries with the name namespace, defined in different
+        # targets files
+        registry_1 = resource_factory.registry.create(
+            name=registry_namespace,
+            calling_context_path=path_name_1,
+        )
+        registry_2 = resource_factory.registry.create(
+            name=registry_namespace,
+            calling_context_path=path_name_2,
+        )
+
+        with pytest.raises(RegistryNameCollisionError) as e_info:
+            RegistryManager.find_namespace_collisions([registry_1, registry_2])
+
+        # The error message should contain references to the registry_namespace
+        # and both paths
+        error_message = e_info.value.message
+        assert registry_namespace in error_message
+        assert str(path_name_1) in error_message
+        assert str(path_name_2) in error_message
