@@ -62,7 +62,7 @@ def _main():
     requested_target = sys.argv[1]
     requested_namespace = sys.argv[2]
     registries = load_registries()
-    manager = RegistryManager(registries)
+    manager = RegistryManager.create(registries)
     target = manager.get_target(requested_target, requested_namespace)
     target.execute()
 
