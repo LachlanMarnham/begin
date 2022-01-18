@@ -293,6 +293,11 @@ class TestRegistryManager:
         # In this context, 'success' means there are no namespace collisions
         registries = resource_factory.registry.create_multi()
 
+        # RegistryManager.find_namespace_collisions shouldn't raise when called
+        # on a list of registries with different namespaces (the default for 
+        # resource_factory.registry.create_multi)
+        RegistryManager.find_namespace_collisions(registries)
+
     def test_find_namespace_collisions_failure(self, resource_factory):
         # In this context, 'failure' means there are namespace collisions
         registry_namespace = 'colliding_namespace'
