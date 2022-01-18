@@ -329,3 +329,13 @@ class TestRegistryManager:
             manager = RegistryManager.create(registries)
         assert mock_fnc.call_args_list == [mock.call(registries)]
         assert isinstance(manager, RegistryManager)
+
+    def test_get_target(self):
+        stub_target_name = 'stub_target_name'
+        stub_namespace = 'stub_namespace'
+
+        manager = RegistryManager([])
+        with mock.patch.object(manager, '_target_map') as mock_target_map:
+            manager.get_target(stub_target_name, stub_namespace)
+
+        assert mock_target_map.get.call_args_list == [mock.call(stub_target_name, stub_namespace)]
