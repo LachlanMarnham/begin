@@ -294,7 +294,7 @@ class TestRegistryManager:
         registries = resource_factory.registry.create_multi()
 
         # RegistryManager.find_namespace_collisions shouldn't raise when called
-        # on a list of registries with different namespaces (the default for 
+        # on a list of registries with different namespaces (the default for
         # resource_factory.registry.create_multi)
         RegistryManager.find_namespace_collisions(registries)
 
