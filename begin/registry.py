@@ -157,7 +157,8 @@ class RegistryManager:
         self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
 
-    def find_namespace_collisions(self, registries: List[Registry]) -> None:
+    @staticmethod
+    def find_namespace_collisions(registries: List[Registry]) -> None:
         registry_path_map = defaultdict(list)
         for registry in registries:
             registry_path_map[registry.name].append(registry.path)
