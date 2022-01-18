@@ -283,10 +283,8 @@ class TestRegistryManager:
 
     def test_initialisation(self, resource_factory):
         registries = resource_factory.registry.create_multi()
-        with mock.patch.object(RegistryManager, 'find_namespace_collisions') as mock_find_namespace_collisions:
-            with mock.patch('begin.registry.TargetMap.create') as mock_target_map_create:
-                RegistryManager(registries)
-        assert mock_find_namespace_collisions.call_args_list == [mock.call(registries)]
+        with mock.patch('begin.registry.TargetMap.create') as mock_target_map_create:
+            RegistryManager(registries)
         assert mock_target_map_create.call_args_list == [mock.call(registries)]
 
     def test_find_namespace_collisions_success(self, resource_factory):

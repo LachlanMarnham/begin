@@ -164,5 +164,5 @@ class RegistryManager:
         if colliding_namespaces:
             raise RegistryNameCollisionError(colliding_namespaces=colliding_namespaces)
 
-    def get_target(self, requested_target_name, requested_namespace):
+    def get_target(self, requested_target_name: str, requested_namespace: str) -> Target:
         return self._target_map.get(requested_target_name, requested_namespace)
