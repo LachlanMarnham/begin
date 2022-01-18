@@ -146,8 +146,12 @@ class TargetMap:
 class RegistryManager:
 
     def __init__(self, registries: List[Registry]) -> None:
-        self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
+
+    @classmethod
+    def create(cls, registries: List[Registry]) -> 'RegistryManager':
+        cls.find_namespace_collisions(registries)
+        return cls(registries)
 
     @staticmethod
     def find_namespace_collisions(registries: List[Registry]) -> None:
