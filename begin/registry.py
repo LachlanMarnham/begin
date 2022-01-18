@@ -157,6 +157,9 @@ class RegistryManager:
         self.find_namespace_collisions(registries)
         self._target_map = TargetMap.create(registries)
 
+    # TODO Should add a factory method which checks find_namespace_collisions
+    # before creating the instance. Then remove find_namespace_collisions
+    # from __init__
     @staticmethod
     def find_namespace_collisions(registries: List[Registry]) -> None:
         registry_path_map = defaultdict(list)
