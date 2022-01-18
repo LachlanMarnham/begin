@@ -3,7 +3,7 @@
 from begin.registry import Registry
 
 
-registry = Registry(name='global')
+registry = Registry(name='resource_global')
 
 
 @registry.register_target

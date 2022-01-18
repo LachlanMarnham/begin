@@ -77,7 +77,7 @@ def test_load_module_from_path(target_file_tmp_tree):
     module = cli.load_module_from_path(target_file_tmp_tree.file_with_registry)
 
     # The loaded module should expose attributes like any imported module
-    assert module.registry.name == 'global'
+    assert module.registry.name == 'resource_global'
 
 
 def test_get_registries_for_module(resource_factory):
@@ -102,5 +102,5 @@ def test_load_registries(target_file_tmp_tree):
     assert mock_ctfp.call_args_list == [mock.call()]
     assert len(registries) == 1
     registry = registries.pop()
-    assert registry.name == 'global'
+    assert registry.name == 'resource_global'
     assert registry.path == file
