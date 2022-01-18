@@ -7,6 +7,7 @@ from types import ModuleType
 from typing import (
     Iterator,
     List,
+    NoReturn,
 )
 
 from begin.exceptions import BeginError
@@ -68,7 +69,7 @@ def _main():
     target.execute()
 
 
-def main():
+def main() -> NoReturn:
     try:
         _main()
     except BeginError as ex:
