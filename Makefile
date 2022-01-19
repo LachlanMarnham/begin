@@ -1,8 +1,14 @@
 .PHONY: tests begin
 
 install:
-	pip install --upgrade pip wheel setuptools
+	pip install --upgrade pip
 	poetry install
+
+ci-setup-poetry:
+	pip install poetry==1.1.3
+	poetry config virtualenvs.create false
+
+ci-install: ci-setup-poetry install	
 
 build:
 	poetry build
@@ -22,5 +28,11 @@ check-style:
 tests:
 	pytest --cov=begin
 
+ci-tests:
+	pytest
+
+ci-tests-with-coverage:
+	pytest --cov=begin --cov-report=xml
+
 begin:
-	@SETUPTOOLS_USE_DISTUTILS=stdlib poetry run begin $(target) $(namespace)
+	begin $(target) $(namespace)
