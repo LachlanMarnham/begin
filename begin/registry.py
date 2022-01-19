@@ -47,10 +47,6 @@ class Target:
         )
 
     @property
-    def key(self) -> TargetMetaData:
-        return self._metadata
-
-    @property
     def registry_namespace(self) -> str:
         return self._registry_namespace
 
