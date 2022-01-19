@@ -28,6 +28,9 @@ check-style:
 tests:
 	pytest --cov=begin
 
+ci-tests:
+	pytest
+
 ci-tests-with-coverage:
 	pytest --cov=begin --cov-report=xml
 
