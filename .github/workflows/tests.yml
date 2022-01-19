@@ -10,7 +10,7 @@ jobs:
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: '3.7'
     - name: Install dependencies
       run: make ci-install
     - name: Generate coverage report
@@ -35,7 +35,7 @@ jobs:
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: '3.7'
     - name: Install dependencies
       run: make ci-install
     - name: Run tests against python 3.7
@@ -51,7 +51,7 @@ jobs:
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
-        python-version: 3.8
+        python-version: '3.8'
     - name: Install dependencies
       run: make ci-install
     - name: Run tests against python 3.8
@@ -67,7 +67,7 @@ jobs:
     - name: Set up Python 3.9
       uses: actions/setup-python@v1
       with:
-        python-version: 3.9
+        python-version: '3.9'
     - name: Install dependencies
       run: make ci-install
     - name: Run tests against python 3.9
@@ -83,7 +83,7 @@ jobs:
     - name: Set up Python 3.10
       uses: actions/setup-python@v1
       with:
-        python-version: 3.10
+        python-version: '3.10'
     - name: Install dependencies
       run: make ci-install
     - name: Run tests against python 3.10
