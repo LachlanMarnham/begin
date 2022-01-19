@@ -134,8 +134,7 @@ class TargetMap:
             self.unpack_registry(registry)
 
     def unpack_registry(self, registry: Registry) -> None:
-        targets = registry.targets
-        for _, target in targets.items():
+        for target in registry.targets:
             self.add(target)
 
     def add(self, target: Target) -> None:
