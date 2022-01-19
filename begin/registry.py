@@ -41,10 +41,6 @@ class Target:
     def __init__(self, function: Callable, registry_namespace: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
-        self._metadata = TargetMetaData.from_target_function(
-            function=self._function,
-            registry_namespace=self._registry_namespace,
-        )
 
     @property
     def registry_namespace(self) -> str:
