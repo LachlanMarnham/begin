@@ -140,6 +140,14 @@ class TestTarget:
         # Target.execute should return None
         assert return_value is None
 
+    def test_repr(self):
+        def stub_function():
+            pass
+
+        stub_namespace = 'stub_namespace'
+        target = Target(function=stub_function, registry_namespace=stub_namespace)
+        assert repr(target) == '<begin.registry.Target(registry_namespace=stub_namespace,function_name=stub_function)>'
+
 
 class TestTargetMap:
 
