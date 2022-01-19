@@ -6,7 +6,7 @@ install:
 
 ci-setup-poetry:
 	pip install poetry==1.1.3
-	poetry config settings.virtualenvs.create false
+	poetry config virtualenvs.create false
 
 ci-install: ci-setup-poetry install	
 
