@@ -1,7 +1,7 @@
 .PHONY: tests begin
 
 install:
-	pip install --upgrade pip wheel setuptools
+	pip install --upgrade pip
 	poetry install
 
 build:
@@ -23,4 +23,4 @@ tests:
 	pytest --cov=begin
 
 begin:
-	@SETUPTOOLS_USE_DISTUTILS=stdlib poetry run begin $(target) $(namespace)
+	begin $(target) $(namespace)
