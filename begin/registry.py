@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import (
     Callable,
     List,
+    Set,
 )
 
 from begin.exceptions import RegistryNameCollisionError
@@ -71,7 +72,7 @@ class Registry:
 
     def __init__(self, name: str = 'default') -> None:
         self.name = name
-        self.targets = {}
+        self.targets: Set[Target] = set()
         self.path = self._get_calling_context_path()
 
     @staticmethod
@@ -105,14 +106,15 @@ class Registry:
             function=function,
             registry_namespace=self.name,
         )
-        self.targets[new_target.key] = new_target
+        self.targets.add(new_target)
 
-    def get_target(self, target_name: str, registry_namespace: str) -> Target:
-        key = TargetMetaData.from_target_name(
-            name=target_name,
-            registry_namespace=registry_namespace,
-        )
-        return self.targets.get(key)
+    # TODO remove
+    # def get_target(self, target_name: str, registry_namespace: str) -> Target:
+    #     key = TargetMetaData.from_target_name(
+    #         name=target_name,
+    #         registry_namespace=registry_namespace,
+    #     )
+    #     return self.targets.get(key)
 
 
 class TargetMap:
