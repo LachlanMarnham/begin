@@ -28,5 +28,8 @@ check-style:
 tests:
 	pytest --cov=begin
 
+ci-tests:
+	pytest --cov=changelog_gen --cov-report=xml
+
 begin:
 	begin $(target) $(namespace)
