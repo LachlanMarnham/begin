@@ -63,6 +63,9 @@ class Target:
         class_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
         return f'<{class_name}(registry_namespace={self.registry_namespace},function_name={self.function_name})>'
 
+    def __hash__(self) -> int:
+        return hash(repr(self))
+
 
 class Registry:
 
