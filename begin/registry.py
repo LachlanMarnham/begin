@@ -7,6 +7,7 @@ from typing import (
     Callable,
     List,
     Set,
+    Dict,
 )
 
 from begin.exceptions import RegistryNameCollisionError
@@ -71,9 +72,9 @@ class Target:
 class Registry:
 
     def __init__(self, name: str = 'default') -> None:
-        self.name = name
+        self.name: str = name
         self.targets: Set[Target] = set()
-        self.path = self._get_calling_context_path()
+        self.path: Path = self._get_calling_context_path()
 
     @staticmethod
     def _get_calling_context_path() -> Path:
@@ -112,8 +113,8 @@ class Registry:
 class TargetMap:
 
     def __init__(self, registries: List[Registry]) -> None:
-        self._registries = registries
-        self._map = {}
+        self._registries: List[Registry] = registries
+        self._map: Dict[str, Dict[str, Target]] = {}
 
     @classmethod
     def create(cls, registries: List[Registry]) -> 'TargetMap':
@@ -146,7 +147,7 @@ class TargetMap:
 class RegistryManager:
 
     def __init__(self, registries: List[Registry]) -> None:
-        self._target_map = TargetMap.create(registries)
+        self._target_map: TargetMap = TargetMap.create(registries)
 
     @classmethod
     def create(cls, registries: List[Registry]) -> 'RegistryManager':
