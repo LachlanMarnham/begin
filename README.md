@@ -1,4 +1,4 @@
-# `begin` - v0.1.0
+# `begin` - v0.2.0
 [![image](https://img.shields.io/pypi/v/begin-cli.svg)](https://pypi.org/project/begin-cli/)
 [![image](https://img.shields.io/pypi/l/begin-cli.svg)](https://pypi.org/project/begin-cli/)
 [![image](https://img.shields.io/pypi/pyversions/begin-cli.svg)](https://pypi.org/project/begin-cli/)
