@@ -140,6 +140,29 @@ class TestTarget:
         # Target.execute should return None
         assert return_value is None
 
+    def test_repr(self):
+        def stub_function():
+            pass
+
+        stub_namespace = 'stub_namespace'
+        target = Target(function=stub_function, registry_namespace=stub_namespace)
+        assert repr(target) == '<begin.registry.Target(registry_namespace=stub_namespace,function_name=stub_function)>'
+
+    def test_hash(self):
+        def stub_function():
+            pass
+
+        stub_namespace = 'stub_namespace'
+        target_1 = Target(function=stub_function, registry_namespace=stub_namespace)
+        target_1_repr = '<begin.registry.Target(registry_namespace=stub_namespace,function_name=stub_function)>'
+
+        # target.__hash__ should defer to the hash of its on repr
+        assert hash(target_1) == hash(target_1_repr)
+
+        # different target instances with the same function name and namespace should have the same hash
+        target_2 = Target(function=stub_function, registry_namespace=stub_namespace)
+        assert hash(target_1) == hash(target_2)
+
 
 class TestTargetMap:
 
@@ -216,9 +239,10 @@ class TestTargetMap:
         target_map = TargetMap([])
         with mock.patch.object(target_map, 'add') as mock_add:
             target_map.unpack_registry(registry)
-        # TODO when registry.targets becomes a list, the assert should be a comparison like:
-        # assert mock_add.call_args_list = [mock.call(r) for r in registry.targets]
-        assert mock_add.call_args_list == [mock.call(r) for _, r in registry.targets.items()]
+
+        # TargetMap.add should have been called once for each target in the registry
+        assert len(mock_add.call_args_list) == len(registry.targets)
+        assert all(mock.call(target) in mock_add.call_args_list for target in registry.targets)
 
     def test_compile(self, resource_factory):
         registry_list = resource_factory.registry.create_multi()
@@ -237,7 +261,7 @@ class TestRegistry:
         with mock.patch.object(Registry, '_get_calling_context_path') as mock_gccp:
             registry = Registry(name='stub_registry_name')
         assert registry.name is stub_registry_name
-        assert registry.targets == {}
+        assert registry.targets == set()
         assert registry.path is mock_gccp.return_value
 
     def test_get_calling_context_path(self):
@@ -265,18 +289,6 @@ class TestRegistry:
                 pass
 
             assert mock_register.call_args_list == [mock.call(foo, key='value')]
-
-    def test_get_target(self, resource_factory):
-        registry = resource_factory.registry.create()
-
-        # Manually unpack the targets from the registry
-        for target_metadata, target in registry.targets.items():
-            function_name = target_metadata.function_name
-            registry_namespace = target_metadata.registry_namespace
-
-            # Registry.get_target should return the manually-unpacked target by
-            # function name and namespace
-            assert registry.get_target(function_name, registry_namespace) is target
 
 
 class TestRegistryManager:

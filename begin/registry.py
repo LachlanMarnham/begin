@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import (
     Callable,
     List,
+    Set,
 )
 
 from begin.exceptions import RegistryNameCollisionError
@@ -59,12 +60,19 @@ class Target:
     def execute(self) -> None:
         self._function()
 
+    def __repr__(self) -> str:
+        class_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
+        return f'<{class_name}(registry_namespace={self.registry_namespace},function_name={self.function_name})>'
+
+    def __hash__(self) -> int:
+        return hash(repr(self))
+
 
 class Registry:
 
-    def __init__(self, name='default'):
+    def __init__(self, name: str = 'default') -> None:
         self.name = name
-        self.targets = {}
+        self.targets: Set[Target] = set()
         self.path = self._get_calling_context_path()
 
     @staticmethod
@@ -80,7 +88,7 @@ class Registry:
         calling_context = next(context for context in stack if context.filename != __file__)
         return Path(calling_context.filename)
 
-    def register_target(self, *args, **kwargs):
+    def register_target(self, *args, **kwargs) -> Callable:
         if args:
             # For calls like @registry.register_target
             function = args[0]
@@ -93,43 +101,35 @@ class Registry:
                 return function
             return decorator
 
-    def _register_target(self, function, **kwargs):
+    def _register_target(self, function: Callable, **kwargs) -> None:
         new_target = Target(
             function=function,
             registry_namespace=self.name,
         )
-        self.targets[new_target.key] = new_target
-
-    def get_target(self, target_name, registry_namespace):
-        key = TargetMetaData.from_target_name(
-            name=target_name,
-            registry_namespace=registry_namespace,
-        )
-        return self.targets.get(key)
+        self.targets.add(new_target)
 
 
 class TargetMap:
 
-    def __init__(self, registries):
+    def __init__(self, registries: List[Registry]) -> None:
         self._registries = registries
         self._map = {}
 
     @classmethod
-    def create(cls, registries):
+    def create(cls, registries: List[Registry]) -> 'TargetMap':
         target_map = cls(registries)
         target_map.compile()
         return target_map
 
-    def compile(self):
+    def compile(self) -> None:
         for registry in self._registries:
             self.unpack_registry(registry)
 
-    def unpack_registry(self, registry):
-        targets = registry.targets
-        for _, target in targets.items():
+    def unpack_registry(self, registry: Registry) -> None:
+        for target in registry.targets:
             self.add(target)
 
-    def add(self, target):
+    def add(self, target: Target) -> None:
         target_name = target.function_name
         namespace = target.registry_namespace
         if target_name not in self._map:
@@ -139,7 +139,7 @@ class TargetMap:
         else:
             self._map[target_name][namespace] = target
 
-    def get(self, target_name, namespace):
+    def get(self, target_name: str, namespace: str) -> Target:
         return self._map[target_name][namespace]
 
 

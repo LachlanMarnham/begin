@@ -1,0 +1,1 @@
+Add Target.__hash__ so Registry.targets can be a set
