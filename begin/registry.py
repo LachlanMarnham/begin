@@ -59,6 +59,10 @@ class Target:
     def execute(self) -> None:
         self._function()
 
+    def __repr__(self) -> str:
+        class_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
+        return f'<{class_name}(registry_namespace={self.registry_namespace},function_name={self.function_name})>'
+
 
 class Registry:
 
