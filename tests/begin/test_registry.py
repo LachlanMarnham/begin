@@ -113,15 +113,15 @@ class TestTarget:
         )
         assert target.registry_namespace is registry_namespace
 
-    @mock.patch('begin.registry.TargetMetaData')
-    def test_function_name(self, MockTargetMetaData):
+    def test_function_name(self):
+        def stub_function():
+            pass
+
         target = Target(
-            function=lambda: ...,
+            function=stub_function,
             registry_namespace='namespace',
         )
-        metadata = MockTargetMetaData.from_target_function.return_value
-        function_name = target.function_name
-        assert metadata.function_name is function_name
+        assert target.function_name == 'stub_function'
 
     def test_execute(self):
         mock_function = mock.Mock()

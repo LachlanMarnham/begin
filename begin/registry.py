@@ -5,9 +5,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import (
     Callable,
+    Dict,
     List,
     Set,
-    Dict,
 )
 
 from begin.exceptions import RegistryNameCollisionError
@@ -56,7 +56,7 @@ class Target:
 
     @property
     def function_name(self) -> str:
-        return self._metadata.function_name
+        return self._function.__name__
 
     def execute(self) -> None:
         self._function()
