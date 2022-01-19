@@ -108,14 +108,6 @@ class Registry:
         )
         self.targets.add(new_target)
 
-    # TODO remove
-    # def get_target(self, target_name: str, registry_namespace: str) -> Target:
-    #     key = TargetMetaData.from_target_name(
-    #         name=target_name,
-    #         registry_namespace=registry_namespace,
-    #     )
-    #     return self.targets.get(key)
-
 
 class TargetMap:
 
