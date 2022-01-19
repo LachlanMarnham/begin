@@ -69,7 +69,7 @@ class Target:
 
 class Registry:
 
-    def __init__(self, name='default'):
+    def __init__(self, name: str = 'default') -> None:
         self.name = name
         self.targets = {}
         self.path = self._get_calling_context_path()
@@ -87,7 +87,7 @@ class Registry:
         calling_context = next(context for context in stack if context.filename != __file__)
         return Path(calling_context.filename)
 
-    def register_target(self, *args, **kwargs):
+    def register_target(self, *args, **kwargs) -> Callable:
         if args:
             # For calls like @registry.register_target
             function = args[0]
@@ -100,14 +100,14 @@ class Registry:
                 return function
             return decorator
 
-    def _register_target(self, function, **kwargs):
+    def _register_target(self, function: Callable, **kwargs) -> None:
         new_target = Target(
             function=function,
             registry_namespace=self.name,
         )
         self.targets[new_target.key] = new_target
 
-    def get_target(self, target_name, registry_namespace):
+    def get_target(self, target_name: str, registry_namespace: str) -> Target:
         key = TargetMetaData.from_target_name(
             name=target_name,
             registry_namespace=registry_namespace,
