@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.0
+
+### Features and Improvements
+
+- Setup test and code style jobs in CI [[#17](https://github.com/LachlanMarnham/begin/issues/17)]
+
+### Bug fixes
+
+- Deprecate TargetMetaData [[#10](https://github.com/LachlanMarnham/begin/issues/10)]
+- Add RegistryManager.create factory method [[#13](https://github.com/LachlanMarnham/begin/issues/13)]
+- Add Target.__hash__ so Registry.targets can be a set [[#9](https://github.com/LachlanMarnham/begin/issues/9)]
+
 ## v0.1.0
 
 ### Features and Improvements
