@@ -239,9 +239,10 @@ class TestTargetMap:
         target_map = TargetMap([])
         with mock.patch.object(target_map, 'add') as mock_add:
             target_map.unpack_registry(registry)
-        # TODO when registry.targets becomes a list, the assert should be a comparison like:
-        # assert mock_add.call_args_list = [mock.call(r) for r in registry.targets]
-        assert mock_add.call_args_list == [mock.call(r) for _, r in registry.targets.items()]
+
+        # TargetMap.add should have been called once for each target in the registry
+        assert len(mock_add.call_args_list) == len(registry.targets)
+        assert all(mock.call(target) in mock_add.call_args_list for target in registry.targets)
 
     def test_compile(self, resource_factory):
         registry_list = resource_factory.registry.create_multi()
