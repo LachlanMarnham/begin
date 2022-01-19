@@ -1,7 +1,6 @@
 import inspect
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 from typing import (
     Callable,
@@ -14,26 +13,6 @@ from begin.exceptions import RegistryNameCollisionError
 
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class TargetMetaData:
-    function_name: str
-    registry_namespace: str
-
-    @classmethod
-    def from_target_function(cls, function, registry_namespace):
-        return cls.from_target_name(
-            name=function.__name__,
-            registry_namespace=registry_namespace,
-        )
-
-    @classmethod
-    def from_target_name(cls, name, registry_namespace):
-        return cls(
-            function_name=name,
-            registry_namespace=registry_namespace,
-        )
 
 
 class Target:
