@@ -4,11 +4,11 @@ install:
 	pip install --upgrade pip
 	poetry install
 
-setup-poetry-ci:
+ci-setup-poetry:
 	pip install poetry==1.1.3
 	poetry config settings.virtualenvs.create false
 
-install-ci: install-poetry-ci install	
+ci-install: ci-install-poetry install	
 
 build:
 	poetry build
