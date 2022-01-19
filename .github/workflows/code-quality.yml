@@ -27,4 +27,4 @@ jobs:
     - name: Install dependencies
       run: make ci-install
     - name: Test with pytest
-      run: make coverage
+      run: make tests
