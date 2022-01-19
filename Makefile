@@ -28,7 +28,7 @@ check-style:
 tests:
 	pytest --cov=begin
 
-ci-tests:
+ci-tests-with-coverage:
 	pytest --cov=changelog_gen --cov-report=xml
 
 begin:
