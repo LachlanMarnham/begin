@@ -148,6 +148,21 @@ class TestTarget:
         target = Target(function=stub_function, registry_namespace=stub_namespace)
         assert repr(target) == '<begin.registry.Target(registry_namespace=stub_namespace,function_name=stub_function)>'
 
+    def test_hash(self):
+        def stub_function():
+            pass
+
+        stub_namespace = 'stub_namespace'
+        target_1 = Target(function=stub_function, registry_namespace=stub_namespace)
+        target_1_repr = '<begin.registry.Target(registry_namespace=stub_namespace,function_name=stub_function)>'
+
+        # target.__hash__ should defer to the hash of its on repr
+        assert hash(target_1) == hash(target_1_repr)
+
+        # different target instances with the same function name and namespace should have the same hash
+        target_2 = Target(function=stub_function, registry_namespace=stub_namespace)
+        assert hash(target_1) == hash(target_2)
+
 
 class TestTargetMap:
 
