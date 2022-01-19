@@ -119,26 +119,26 @@ class Registry:
 
 class TargetMap:
 
-    def __init__(self, registries):
+    def __init__(self, registries: List[Registry]) -> None:
         self._registries = registries
         self._map = {}
 
     @classmethod
-    def create(cls, registries):
+    def create(cls, registries: List[Registry]) -> 'TargetMap':
         target_map = cls(registries)
         target_map.compile()
         return target_map
 
-    def compile(self):
+    def compile(self) -> None:
         for registry in self._registries:
             self.unpack_registry(registry)
 
-    def unpack_registry(self, registry):
+    def unpack_registry(self, registry: Registry) -> None:
         targets = registry.targets
         for _, target in targets.items():
             self.add(target)
 
-    def add(self, target):
+    def add(self, target: Target) -> None:
         target_name = target.function_name
         namespace = target.registry_namespace
         if target_name not in self._map:
@@ -148,7 +148,7 @@ class TargetMap:
         else:
             self._map[target_name][namespace] = target
 
-    def get(self, target_name, namespace):
+    def get(self, target_name: str, namespace: str) -> Target:
         return self._map[target_name][namespace]
 
 
