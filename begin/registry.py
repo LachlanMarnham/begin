@@ -52,7 +52,7 @@ class Target:
 
     @property
     def registry_namespace(self) -> str:
-        return self._metadata.registry_namespace
+        return self._registry_namespace
 
     @property
     def function_name(self) -> str:
