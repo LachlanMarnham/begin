@@ -1,4 +1,4 @@
-name: Style
+name: flake8
 
 on: [push]
 
