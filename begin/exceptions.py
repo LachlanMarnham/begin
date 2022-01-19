@@ -31,7 +31,7 @@ class BeginError(Exception, metaclass=ExitCodeMeta):
     be raised to the user-level, but be caught at the cli-level and handled with an
     appropriate message and exit code. All inheriting classes must implement
     `cls._exit_code_enum` (see: `ExitCodeMeta`). """
-    _exit_code_enum: None
+    _exit_code_enum: ExitCodeEnum
 
     @property
     def exit_code(self) -> int:

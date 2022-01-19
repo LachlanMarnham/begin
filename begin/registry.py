@@ -1,10 +1,10 @@
 import inspect
 import logging
 from collections import defaultdict
-from dataclasses import dataclass
 from pathlib import Path
 from typing import (
     Callable,
+    Dict,
     List,
     Set,
 )
@@ -15,47 +15,19 @@ from begin.exceptions import RegistryNameCollisionError
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True)
-class TargetMetaData:
-    function_name: str
-    registry_namespace: str
-
-    @classmethod
-    def from_target_function(cls, function, registry_namespace):
-        return cls.from_target_name(
-            name=function.__name__,
-            registry_namespace=registry_namespace,
-        )
-
-    @classmethod
-    def from_target_name(cls, name, registry_namespace):
-        return cls(
-            function_name=name,
-            registry_namespace=registry_namespace,
-        )
-
-
 class Target:
 
     def __init__(self, function: Callable, registry_namespace: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
-        self._metadata = TargetMetaData.from_target_function(
-            function=self._function,
-            registry_namespace=self._registry_namespace,
-        )
-
-    @property
-    def key(self) -> TargetMetaData:
-        return self._metadata
 
     @property
     def registry_namespace(self) -> str:
-        return self._metadata.registry_namespace
+        return self._registry_namespace
 
     @property
     def function_name(self) -> str:
-        return self._metadata.function_name
+        return self._function.__name__
 
     def execute(self) -> None:
         self._function()
@@ -71,9 +43,9 @@ class Target:
 class Registry:
 
     def __init__(self, name: str = 'default') -> None:
-        self.name = name
+        self.name: str = name
         self.targets: Set[Target] = set()
-        self.path = self._get_calling_context_path()
+        self.path: Path = self._get_calling_context_path()
 
     @staticmethod
     def _get_calling_context_path() -> Path:
@@ -112,8 +84,8 @@ class Registry:
 class TargetMap:
 
     def __init__(self, registries: List[Registry]) -> None:
-        self._registries = registries
-        self._map = {}
+        self._registries: List[Registry] = registries
+        self._map: Dict[str, Dict[str, Target]] = {}
 
     @classmethod
     def create(cls, registries: List[Registry]) -> 'TargetMap':
@@ -146,7 +118,7 @@ class TargetMap:
 class RegistryManager:
 
     def __init__(self, registries: List[Registry]) -> None:
-        self._target_map = TargetMap.create(registries)
+        self._target_map: TargetMap = TargetMap.create(registries)
 
     @classmethod
     def create(cls, registries: List[Registry]) -> 'RegistryManager':
