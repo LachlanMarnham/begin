@@ -29,7 +29,7 @@ tests:
 	pytest --cov=begin
 
 ci-tests-with-coverage:
-	pytest --cov=changelog_gen --cov-report=xml
+	pytest --cov=begin --cov-report=xml
 
 begin:
 	begin $(target) $(namespace)
