@@ -10,6 +10,7 @@ from typing import (
 )
 
 from begin.exceptions import RegistryNameCollisionError
+from begin.constants import DEFAULT_REGISTRY_NAME
 
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ class Target:
 
 class Registry:
 
-    def __init__(self, name: str = 'default') -> None:
+    def __init__(self, name: str = DEFAULT_REGISTRY_NAME) -> None:
         self.name: str = name
         self.targets: Set[Target] = set()
         self.path: Path = self._get_calling_context_path()
