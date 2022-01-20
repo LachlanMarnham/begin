@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0
+
+### Features and Improvements
+
+- Add protected publish workflow to CI [[#25](https://github.com/LachlanMarnham/begin/issues/25)]
+
 ## v0.2.0
 
 ### Features and Improvements
