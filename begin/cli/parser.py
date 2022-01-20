@@ -1,5 +1,7 @@
 import argparse
+
 from begin.constants import DEFAULT_REGISTRY_NAME
+
 
 parser = argparse.ArgumentParser()
 

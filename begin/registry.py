@@ -9,8 +9,8 @@ from typing import (
     Set,
 )
 
-from begin.exceptions import RegistryNameCollisionError
 from begin.constants import DEFAULT_REGISTRY_NAME
+from begin.exceptions import RegistryNameCollisionError
 
 
 logger = logging.getLogger(__name__)
