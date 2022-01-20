@@ -7,3 +7,6 @@ class ExitCodeEnum(Enum):
     SUCCESS = 0
     UNSPECIFIED_FAILURE = 1
     REGISTRY_NAME_COLLISION = 3
+
+
+DEFAULT_REGISTRY_NAME = 'default'
