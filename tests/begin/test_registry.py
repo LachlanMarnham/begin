@@ -131,12 +131,12 @@ class TestTargetMap:
     def test_add_targets_with_same_function_name(self, resource_factory):
         # Create two targets with the same name in different namespaces
         function_name = 'install'
-        namespace_1 = 'default'
+        namespace_1 = 'namespace_1'
         target_1 = resource_factory.target.create(
             function_name=function_name,
             registry_namespace=namespace_1,
         )
-        namespace_2 = 'global'
+        namespace_2 = 'namespace_2'
         target_2 = resource_factory.target.create(
             function_name=function_name,
             registry_namespace=namespace_2,
