@@ -1,0 +1,19 @@
+name: Publish to PYPI
+
+on:
+  workflow_dispatch:
+    branches:    
+    - 'master'
+
+jobs:
+  publish:
+    if: ${{ github.actor == 'LachlanMarnham' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and publish to PYPI
+        uses: JRubics/poetry-publish@v1.9
+        with:
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          python_version: "3.7.5"
+          poetry_version: "==1.1.3"
