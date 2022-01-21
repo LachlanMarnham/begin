@@ -1,4 +1,5 @@
 import argparse
+from dataclasses import dataclass
 from typing import (
     Dict,
     List,
@@ -19,51 +20,66 @@ class Request:
         self._options[key] = value
 
 
-def parse_requests(args: List[str]) -> List[Request]:
-    # TODO things to formalise:
-    # - params must be seperated by a colon
-    # - target names and registry names must not contain a colon
-    # - target names and registry names must not contain an @
-    # - if a target, a registry or an argument contains whitespace, it must be wrapped in '...'
-    # For now, this algorithm can only handle one target request
-    requests = [] 
-    request = None
-    for arg in args:
-        if ':' not in arg:
-            # Not a key:value argument pair, must be either target or target@namespace
-            if request is not None:
-                requests.append(request)
-            request = Request(arg)
-        else:
-            request.add_option(arg)
-    requests.append(request)
-    return requests
+@dataclass
+class OptionalArg:
+    short: str
+    long: str
+    default: str
+    help: str
 
 
-parser = argparse.ArgumentParser(description='A utility for running targets in a targets.py file.')
+class Parser(argparse.ArgumentParser):
+    OPTIONAL_ARGS = [
+        OptionalArg(
+            short='-e',
+            long='--extension',
+            default='*targets.py',
+            help='The suffix to match target file patterns against.',
+        ),
+        OptionalArg(
+            short='-g',
+            long='--global-dir',
+            default='home',
+            help='The location of the directory holding global targets files.',
+        ),
+    ]
 
-parser.add_argument(
-    '-e',
-    '--extension',
-    default='*targets.py',
-    help='The suffix to match target file patterns against.',
-)
+    def __init__(self) -> None:
+        super().__init__(description='A utility for running targets in a targets.py file.')
 
-parser.add_argument(
-    '-g',
-    '--global-dir',
-    default='home',
-    help='The location of the directory holding global targets files.',
-)
-parsed_args, extra_args = parser.parse_known_args()
+    def _setup_optional_args(self) -> None:
+        for arg in self.OPTIONAL_ARGS:
+            self.add_argument(
+                arg.short,
+                arg.long,
+                default=arg.default,
+                help=arg.help,
+            )
 
-def foo(key):
-    print(key)
+    def _extract_requests(self, args: List[str]) -> List[Request]:
+        # TODO things to formalise:
+        # - params must be seperated by a colon
+        # - target names and registry names must not contain a colon
+        # - target names and registry names must not contain an @
+        # - if a target, a registry or an argument contains whitespace, it must be wrapped in '...'
+        # For now, this algorithm can only handle one target request
+        requests = []
+        request = None
+        for arg in args:
+            if ':' not in arg:
+                # Not a key:value argument pair, must be either target or target@namespace
+                if request is not None:
+                    requests.append(request)
+                request = Request(arg)
+            else:
+                request.add_option(arg)
+        requests.append(request)
+        return requests
 
-def bar(key, key_2):
-    print(key)
-
-def baz():
-    pass
-import pdb; pdb.set_trace()
-print(parsed_args, extra_args)
+    @classmethod
+    def parse_command(cls):
+        parser = cls()
+        parser._setup_optional_args()
+        optional_args, request_args = parser.parse_known_args()
+        requests = parser._extract_requests(request_args)
+        return optional_args, requests
