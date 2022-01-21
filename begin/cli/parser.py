@@ -28,6 +28,12 @@ class OptionalArg:
     help: str
 
 
+@dataclass
+class Options:
+    extension: str
+    global_dir: str
+
+
 class Parser(argparse.ArgumentParser):
     OPTIONAL_ARGS = [
         OptionalArg(
