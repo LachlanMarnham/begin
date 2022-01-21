@@ -15,6 +15,7 @@ from begin.registry import (
     Registry,
     RegistryManager,
 )
+from begin.cli.parser import parse_command, ParsedCommand
 
 
 logger = logging.getLogger(__name__)
@@ -59,12 +60,15 @@ def load_registries() -> List[Registry]:
 
 
 def _main():
-    requested_target = sys.argv[1]
-    requested_namespace = sys.argv[2]
+    parsed_command: ParsedCommand = parse_command()
     registries = load_registries()
     manager = RegistryManager.create(registries)
-    target = manager.get_target(requested_target, requested_namespace)
-    target.execute()
+    for request in parsed_command.requests:
+        target = manager.get_target(
+            request.target_name,
+            request.registry_namespace,
+        )
+        target.execute(**request.options)
 
 
 def main() -> NoReturn:

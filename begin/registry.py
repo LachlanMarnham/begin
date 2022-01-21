@@ -30,8 +30,8 @@ class Target:
     def function_name(self) -> str:
         return self._function.__name__
 
-    def execute(self) -> None:
-        self._function()
+    def execute(self, **options) -> None:
+        self._function(**options)
 
     def __repr__(self) -> str:
         class_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
