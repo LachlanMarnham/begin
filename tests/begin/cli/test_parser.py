@@ -57,3 +57,78 @@ def test_parse_requests_one_request_no_namespace_no_args():
     assert requests[0].target_name == 'install'
     assert requests[0].registry_namespace == DEFAULT_REGISTRY_NAME
     assert requests[0]._options == {}
+
+
+def test_parse_requests_one_request_with_namespace_no_args():
+    requests = parser._parse_requests(['install@global'])
+    assert len(requests) == 1
+    assert requests[0].target_name == 'install'
+    assert requests[0].registry_namespace == 'global'
+    assert requests[0]._options == {}
+
+
+@pytest.mark.parametrize('request_args, target_names, namespaces, options', (
+    (
+        ['install'],
+        ['install'],
+        [DEFAULT_REGISTRY_NAME],
+        [{}],
+    ),
+    (
+        ['install@global'],
+        ['install'],
+        ['global'],
+        [{}],
+    ),
+    (
+        ['install@global', 'key:value'],
+        ['install'],
+        ['global'],
+        [{'key': 'value'}],
+    ),
+    (
+        ['install@global', 'key1:value1', 'key2:value2'],
+        ['install'],
+        ['global'],
+        [{'key1': 'value1', 'key2': 'value2'}],
+    ),
+    (
+        ['install@global', 'key1:value1', 'key2:value2'],
+        ['install'],
+        ['global'],
+        [{'key1': 'value1', 'key2': 'value2'}],
+    ),
+    (
+        ['install@global', 'key1:value1', 'key2:value2', 'tests@code-quality'],
+        ['install', 'tests'],
+        ['global', 'code-quality'],
+        [{'key1': 'value1', 'key2': 'value2'}, {}],
+    ),
+    (
+        ['install@global', 'key1:value1', 'key2:value2', 'tests@code-quality', 'flake8@code-quality'],
+        ['install', 'tests', 'flake8'],
+        ['global', 'code-quality', 'code-quality'],
+        [{'key1': 'value1', 'key2': 'value2'}, {}, {}],
+    ),
+    (
+        ['install@global', 'key1:value1', 'key2:value2', 'tests@code-quality', 'flake8@code-quality', 'key3:value3'],
+        ['install', 'tests', 'flake8'],
+        ['global', 'code-quality', 'code-quality'],
+        [{'key1': 'value1', 'key2': 'value2'}, {}, {'key3': 'value3'}],
+    ),
+))
+def test_parse_requests(request_args, target_names, namespaces, options):
+    requests = parser._parse_requests(request_args)
+
+    # All requests have the right type
+    assert all(isinstance(r, parser.Request) for r in requests)
+
+    # Returned the right number of requests
+    assert len(requests) == len(target_names)
+
+    # Each request has the right target_name, namespace, and options
+    for i in range(len(requests)):
+        request = requests[i]
+        assert request.target_name == target_names[i]
+        assert request.registry_namespace == namespaces[i]
+        assert request._options == options[i]
