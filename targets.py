@@ -1,4 +1,4 @@
-from begin.registry import Registry
+from begin import Registry
 
 
 registry = Registry()
