@@ -27,6 +27,10 @@ class Request:
     def registry_namespace(self) -> str:
         return self._registry_namespace
 
+    @property
+    def options(self) -> Dict[str, str]:
+        return self._options
+
 
 @dataclass
 class OptionalArg:
