@@ -49,3 +49,11 @@ def test_parse_command(MockArgumentParser, mock_parse_requests):
     assert result.extension == stub_optional_args.extension
     assert result.global_dir == stub_optional_args.global_dir
     assert result.requests == mock_parse_requests.return_value
+
+
+def test_parse_requests_one_request_no_namespace_no_args():
+    requests = parser._parse_requests(['install'])
+    assert len(requests) == 1
+    assert requests[0].target_name == 'install'
+    assert requests[0].registry_namespace == DEFAULT_REGISTRY_NAME
+    assert requests[0]._options == {}
