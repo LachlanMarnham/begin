@@ -19,6 +19,14 @@ class Request:
         key, _, value = param_identifier.partition(':')
         self._options[key] = value
 
+    @property
+    def target_name(self) -> str:
+        return self._target_name
+
+    @property
+    def registry_namespace(self) -> str:
+        return self._registry_namespace
+
 
 @dataclass
 class OptionalArg:
