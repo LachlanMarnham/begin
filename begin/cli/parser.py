@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser
 from dataclasses import dataclass
 from typing import (
     Dict,
@@ -73,7 +73,7 @@ def _parse_requests(args: List[str]) -> List[Request]:
 
 
 def parse_command():
-    parser = argparse.ArgumentParser(description='A utility for running targets in a targets.py file.')
+    parser = ArgumentParser(description='A utility for running targets in a targets.py file.')
 
     for optional_arg in OPTIONAL_ARGS:
         parser.add_argument(
