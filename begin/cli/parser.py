@@ -84,9 +84,13 @@ class Parser(argparse.ArgumentParser):
         return requests
 
     @classmethod
-    def parse_command(cls):
+    def parse_command(cls) -> ParsedCommand:
         parser = cls()
         parser._setup_optional_args()
         optional_args, request_args = parser.parse_known_args()
         requests = parser._extract_requests(request_args)
-        return optional_args, requests
+        return ParsedCommand(
+            extension=optional_args.extension,
+            global_dir=optional_args.global_dir,
+            requests=requests,
+        )
