@@ -1,6 +1,33 @@
 from unittest import mock
 
+import pytest
+
 from begin.cli import parser
+from begin.constants import DEFAULT_REGISTRY_NAME
+
+
+class TestRequest:
+    @pytest.mark.parametrize('target_identifier, target_name, registry_namespace', (
+        ('foo', 'foo', DEFAULT_REGISTRY_NAME),
+        ('foo@', 'foo', DEFAULT_REGISTRY_NAME),
+        ('foo@bar', 'foo', 'bar'),
+        ('foo@bar baz', 'foo', 'bar baz'),
+        ('foo@bar@baz', 'foo', 'bar@baz'),
+    ))
+    def test_initialisation(self, target_identifier, target_name, registry_namespace):
+        request = parser.Request(target_identifier)
+        assert request._target_name == target_name
+        assert request._registry_namespace == registry_namespace
+
+    @pytest.mark.parametrize('param_identifier, options', (
+        ('foo:bar', {'foo': 'bar'}),
+        ('foo:bar baz', {'foo': 'bar baz'}),
+        ('foo:bar@baz', {'foo': 'bar@baz'}),
+    ))
+    def test_add_option(self, param_identifier, options):
+        request = parser.Request('target@namespace')
+        request.add_option(param_identifier)
+        assert request._options == options
 
 
 @mock.patch.object(parser, '_parse_requests')

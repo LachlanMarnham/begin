@@ -55,7 +55,7 @@ def _parse_requests(args: List[str]) -> List[Request]:
     # TODO things to formalise:
     # - params must be seperated by a colon
     # - target names and registry names must not contain a colon
-    # - target names and registry names must not contain an @
+    # - target names must not contain an @
     # - if a target, a registry or an argument contains whitespace, it must be wrapped in '...'
     # For now, this algorithm can only handle one target request
     requests = []
