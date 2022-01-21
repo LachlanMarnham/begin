@@ -29,9 +29,10 @@ class OptionalArg:
 
 
 @dataclass
-class Options:
+class ParsedCommand:
     extension: str
     global_dir: str
+    requests: List[Request]
 
 
 class Parser(argparse.ArgumentParser):
