@@ -50,7 +50,7 @@ OPTIONAL_ARGS = [
         OptionalArg(
             short='-g',
             long='--global-dir',
-            default='home',  # TODO get this from settings
+            default='~/.begin',  # TODO get this from settings
             help='The location of the directory holding global targets files.',
         ),
     ]
