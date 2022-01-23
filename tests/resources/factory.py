@@ -34,20 +34,30 @@ def make_random_function_name() -> str:
     return function_name
 
 
-def create_function(fn_name: Optional[str] = None) -> Callable:
+def make_random_function(fn_name: Optional[str] = None) -> Callable:
     fn_name = fn_name or make_random_function_name()
     exec(f'def {fn_name}(): pass')
     function = locals()[fn_name]
     return function
 
 
-def make_random_string(no_whitespace: bool = False) -> str:
-    characters = string.ascii_letters + string.digits + string.punctuation
+def make_random_string(no_whitespace: bool = False, disallowed_punctuation: str = '') -> str:
+    punctuation = ''.join(p for p in string.punctuation if p not in disallowed_punctuation)
+    characters = string.ascii_letters + string.digits + punctuation
     if not no_whitespace:
         characters += string.whitespace
+    characters += punctuation
     string_length = random.randint(1, 100)
     random_string = ''.join(random.choice(characters) for _ in range(string_length))
     return random_string
+
+
+def make_random_target_name() -> str:
+    return make_random_string(disallowed_punctuation=':@')
+
+
+def make_random_registry_name() -> str:
+    return make_random_string(disallowed_punctuation=':')
 
 
 def make_random_dir_path() -> Path:
@@ -73,6 +83,18 @@ def make_random_targets_file_path() -> Path:
     return targets_file
 
 
+def make_random_target_identifier() -> str:
+    target_name = make_random_target_name()
+    registry_name = make_random_registry_name()
+    return f'{target_name}@{registry_name}'
+
+
+def make_random_target_arg():
+    arg_name = make_random_string(no_whitespace=True, disallowed_punctuation=string.punctuation)
+    arg_value = make_random_string()
+    return f'{arg_name}:{arg_value}'
+
+
 class AbstractFactory(metaclass=ABCMeta):
 
     @abstractmethod
@@ -90,8 +112,8 @@ class TargetFactory(AbstractFactory):
     ) -> Target:
         """ Creates an instance of Target, given the target function and a
         namespace."""
-        function = function or create_function(function_name)
-        registry_namespace = registry_namespace or make_random_string()
+        function = function or make_random_function(function_name)
+        registry_namespace = registry_namespace or make_random_registry_name()
 
         return Target(
             function=function,
@@ -131,12 +153,12 @@ class RegistryFactory(AbstractFactory):
         will be generated at random. If the calling_context_path is not provided, it will
         be generated at random. If a list of target_functions are not provided, a random
         list will be generated with length between 1 and 10 inclusive. """
-        name = name or make_random_string()
+        name = name or make_random_registry_name()
         registry = Registry(name)
         registry.path = calling_context_path or make_random_targets_file_path()
         if target_functions is None:
             fn_list_len = random.randint(1, 10)
-            target_functions = [create_function() for _ in range(fn_list_len)]
+            target_functions = [make_random_function() for _ in range(fn_list_len)]
         for function in target_functions:
             registry.register_target(function)
         return registry
@@ -160,12 +182,8 @@ class RequestFactory(AbstractFactory):
         target_identifier: Optional[str] = None,
         options: Optional[List[str]] = None,
     ) -> Request:
-        # TODO do this properly respecting naming rules
-        target_identifier = target_identifier or 'abc@def'
-        options = options if options is not None else [
-            'key_1:value_1',
-            'key_2:value_2',
-        ]
+        target_identifier = target_identifier if target_identifier is not None else make_random_target_identifier()
+        options = options if options is not None else [make_random_target_arg() for _ in range(random.randint(1, 10))]
         request = Request(target_identifier)
         for option in options:
             request.add_option(option)
