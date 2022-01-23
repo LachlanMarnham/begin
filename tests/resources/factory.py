@@ -189,6 +189,20 @@ class RequestFactory(AbstractFactory):
             request.add_option(option)
         return request
 
+    def create_multi(
+        self,
+        request_count: Optional[int] = None,
+    ) -> List[Request]:
+        """ Creates a list of Request instances. The list has length request_count,
+        but if request_count is not provided the length will be some random int between
+        1 and 10 inclusive. """
+        request_count = request_count if request_count is not None else random.randint(1, 10)
+        requests = []
+        for _ in range(request_count):
+            new_request = self.create()
+            requests.append(new_request)
+        return requests
+
 
 class Factory:
     target = TargetFactory()
