@@ -13,11 +13,6 @@ def make_random_string():
     return factory.make_random_string
 
 
-@pytest.fixture(scope='function')
-def make_random_dir_path():
-    return factory.make_random_dir_path
-
-
 @dataclass
 class TargetTreeConfig:
     home_dir: Path
