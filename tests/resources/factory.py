@@ -12,6 +12,7 @@ from typing import (
     Optional,
 )
 
+from begin.cli.parser import Request
 from begin.registry import (
     Registry,
     Target,
@@ -152,6 +153,26 @@ class RegistryFactory(AbstractFactory):
         return registries
 
 
+class RequestFactory(AbstractFactory):
+
+    def create(
+        self,
+        target_identifier: Optional[str] = None,
+        options: Optional[List[str]] = None,
+    ) -> Request:
+        # TODO do this properly respecting naming rules
+        target_identifier = target_identifier or 'abc@def'
+        options = options if options is not None else [
+            'key_1:value_1',
+            'key_2:value_2',
+        ]
+        request = Request(target_identifier)
+        for option in options:
+            request.add_option(option)
+        return request
+
+
 class Factory:
     target = TargetFactory()
     registry = RegistryFactory()
+    request = RequestFactory()
