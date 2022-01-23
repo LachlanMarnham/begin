@@ -56,19 +56,20 @@ class TestCli:
         # The process should exit with code 0
         assert e_info.value.code is ExitCodeEnum.SUCCESS.value
 
-    @mock.patch('begin.cli.cli.Path.home')
-    @mock.patch('begin.cli.cli.Path.cwd')
-    def test_collect_target_file_paths(self, mock_cwd, mock_home, target_file_tmp_tree):
-        mock_cwd.return_value = target_file_tmp_tree.cwd_dir
-        mock_home.return_value = target_file_tmp_tree.home_dir
-        target_paths_gen = cli.collect_target_file_paths()
 
-        # target_paths_gen should be a generator
-        assert inspect.isgenerator(target_paths_gen)
+@mock.patch('begin.cli.cli.Path.home')
+@mock.patch('begin.cli.cli.Path.cwd')
+def test_collect_target_file_paths(mock_cwd, mock_home, target_file_tmp_tree):
+    mock_cwd.return_value = target_file_tmp_tree.cwd_dir
+    mock_home.return_value = target_file_tmp_tree.home_dir
+    target_paths_gen = cli.collect_target_file_paths()
 
-        # collect_target_file_paths should collect the correct paths
-        target_paths = set(target_paths_gen)
-        assert target_paths == set(target_file_tmp_tree.expected_target_files)
+    # target_paths_gen should be a generator
+    assert inspect.isgenerator(target_paths_gen)
+
+    # collect_target_file_paths should collect the correct paths
+    target_paths = set(target_paths_gen)
+    assert target_paths == set(target_file_tmp_tree.expected_target_files)
 
 
 def test_load_module_from_path(target_file_tmp_tree):
