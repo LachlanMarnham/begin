@@ -14,6 +14,10 @@ def flake8() -> int:
 
 
 @with_exit
-def pytest(args) -> int:
+def pytest(*args) -> int:
     import pytest
-    return pytest.main(args)
+
+    # pytest.main expects a list of strings
+    args_list = list(args)
+
+    return pytest.main(args_list)

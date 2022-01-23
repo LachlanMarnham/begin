@@ -15,7 +15,7 @@ def check_style():
 
 @registry.register_target
 def tests():
-    pytest(['--cov', 'begin'])
+    pytest('--cov', 'begin')
 
 
 @registry.register_target
