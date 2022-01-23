@@ -29,6 +29,21 @@ class TestRequest:
         request.add_option(param_identifier)
         assert request._options == options
 
+    def test_target_name(self, resource_factory):
+        request = resource_factory.request.create('target@registry')
+        assert request.target_name == request._target_name == 'target'
+
+    def test_registry_namespace(self, resource_factory):
+        request = resource_factory.request.create('target@registry')
+        assert request.registry_namespace == request._registry_namespace == 'registry'
+
+    def test_options(self, resource_factory):
+        request = resource_factory.request.create(options=['key_1:value_1', 'key_2:value_2'])
+        assert request.options == request._options == {
+            'key_1': 'value_1',
+            'key_2': 'value_2',
+        }
+
 
 @mock.patch.object(parser, '_parse_requests')
 @mock.patch.object(parser, 'ArgumentParser')
