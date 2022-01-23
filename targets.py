@@ -1,9 +1,13 @@
 from begin import Registry
+from begin.recipes import flake8
 
 
 registry = Registry()
-# registry_2 = Registry()
-# registry_3 = Registry(name='global')
+
+
+@registry.register_target
+def check_style():
+    flake8()
 
 
 @registry.register_target
