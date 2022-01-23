@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.4.0
+
+### Features and Improvements
+
+- Enable invocation of several chained recipes [[#15](https://github.com/LachlanMarnham/begin/issues/15)]
+- Enable targets with parameters [[#6](https://github.com/LachlanMarnham/begin/issues/6)]
+- Add basic CLI [[#7](https://github.com/LachlanMarnham/begin/issues/7)]
+
 ## v0.3.0
 
 ### Features and Improvements
