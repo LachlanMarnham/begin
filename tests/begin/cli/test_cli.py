@@ -5,11 +5,14 @@ from unittest import mock
 import pytest
 
 from begin.cli import cli
+from begin.cli.parser import ParsedCommand
 from begin.constants import ExitCodeEnum
 from begin.exceptions import BeginError
 
 
-class TestCli:
+class TestMainPublic:
+    """ These are tests for begin.cli.cli.main. The tests for begin.cli.cli._main are in
+    TestMainPrivate. """
 
     @mock.patch('begin.cli.cli._main')
     def test_main_failure(self, mock_private_main, make_random_string, caplog):
@@ -56,19 +59,50 @@ class TestCli:
         # The process should exit with code 0
         assert e_info.value.code is ExitCodeEnum.SUCCESS.value
 
-    @mock.patch('begin.cli.cli.Path.home')
-    @mock.patch('begin.cli.cli.Path.cwd')
-    def test_collect_target_file_paths(self, mock_cwd, mock_home, target_file_tmp_tree):
-        mock_cwd.return_value = target_file_tmp_tree.cwd_dir
-        mock_home.return_value = target_file_tmp_tree.home_dir
-        target_paths_gen = cli.collect_target_file_paths()
 
-        # target_paths_gen should be a generator
-        assert inspect.isgenerator(target_paths_gen)
+class TestMainPrivate:
 
-        # collect_target_file_paths should collect the correct paths
-        target_paths = set(target_paths_gen)
-        assert target_paths == set(target_file_tmp_tree.expected_target_files)
+    def test_main(self, resource_factory):
+        registries = resource_factory.registry.create_multi()
+        requests = resource_factory.request.create_multi()
+        parsed_command = ParsedCommand(
+            extension='*recipes.py',
+            global_dir='~/.recipes',
+            requests=requests,
+        )
+        with mock.patch('begin.cli.cli.load_registries', return_value=registries) as mock_load_registries:
+            with mock.patch('begin.cli.cli.parse_command', return_value=parsed_command) as mock_parse_command:
+                with mock.patch('begin.cli.cli.RegistryManager') as MockRegistryManager:
+                    cli._main()
+
+        mock_manager = MockRegistryManager.create.return_value
+        assert mock_parse_command.call_args_list == [mock.call()]
+        assert mock_load_registries.call_args_list == [mock.call()]
+        assert MockRegistryManager.create.call_args_list == [mock.call(registries)]
+        assert mock_manager.get_target.call_count == len(requests)
+
+        for i in range(len(requests)):
+            request = requests[i]
+            get_target_call = mock_manager.get_target.call_args_list[i]
+            assert get_target_call == mock.call(
+                request.target_name,
+                request.registry_namespace,
+            )
+
+
+@mock.patch('begin.cli.cli.Path.home')
+@mock.patch('begin.cli.cli.Path.cwd')
+def test_collect_target_file_paths(mock_cwd, mock_home, target_file_tmp_tree):
+    mock_cwd.return_value = target_file_tmp_tree.cwd_dir
+    mock_home.return_value = target_file_tmp_tree.home_dir
+    target_paths_gen = cli.collect_target_file_paths()
+
+    # target_paths_gen should be a generator
+    assert inspect.isgenerator(target_paths_gen)
+
+    # collect_target_file_paths should collect the correct paths
+    target_paths = set(target_paths_gen)
+    assert target_paths == set(target_file_tmp_tree.expected_target_files)
 
 
 def test_load_module_from_path(target_file_tmp_tree):

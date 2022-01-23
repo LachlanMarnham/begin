@@ -9,6 +9,7 @@ from typing import (
     Set,
 )
 
+from begin.constants import DEFAULT_REGISTRY_NAME
 from begin.exceptions import RegistryNameCollisionError
 
 
@@ -29,8 +30,8 @@ class Target:
     def function_name(self) -> str:
         return self._function.__name__
 
-    def execute(self) -> None:
-        self._function()
+    def execute(self, **options) -> None:
+        self._function(**options)
 
     def __repr__(self) -> str:
         class_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
@@ -42,7 +43,7 @@ class Target:
 
 class Registry:
 
-    def __init__(self, name: str = 'default') -> None:
+    def __init__(self, name: str = DEFAULT_REGISTRY_NAME) -> None:
         self.name: str = name
         self.targets: Set[Target] = set()
         self.path: Path = self._get_calling_context_path()

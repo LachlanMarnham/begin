@@ -52,11 +52,15 @@ class TestTarget:
         )
         return_value = mock_target.execute()
 
-        # Target.execute should defer to Target._function
-        assert mock_function.call_args_list == [mock.call()]
-
         # Target.execute should return None
         assert return_value is None
+
+        options = {'key_1': 'val_1', 'key_2': 'val_2'}
+        return_value = mock_target.execute(**options)
+        assert return_value is None
+
+        # Target.execute should defer to Target._function
+        assert mock_function.call_args_list == [mock.call(), mock.call(**options)]
 
     def test_repr(self):
         def stub_function():
@@ -131,12 +135,12 @@ class TestTargetMap:
     def test_add_targets_with_same_function_name(self, resource_factory):
         # Create two targets with the same name in different namespaces
         function_name = 'install'
-        namespace_1 = 'default'
+        namespace_1 = 'namespace_1'
         target_1 = resource_factory.target.create(
             function_name=function_name,
             registry_namespace=namespace_1,
         )
-        namespace_2 = 'global'
+        namespace_2 = 'namespace_2'
         target_2 = resource_factory.target.create(
             function_name=function_name,
             registry_namespace=namespace_2,

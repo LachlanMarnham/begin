@@ -1,4 +1,4 @@
-from begin.registry import Registry
+from begin import Registry
 
 
 registry = Registry()
@@ -12,8 +12,8 @@ def install():
 
 
 @registry.register_target(name='tests')
-def tests():
-    print('default tests')
+def tests(str_1, str_2):
+    print(f'{str_1}, {str_2}!')
 
 
 @registry.register_target
