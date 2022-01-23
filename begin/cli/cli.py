@@ -10,12 +10,15 @@ from typing import (
     NoReturn,
 )
 
+from begin.cli.parser import (
+    ParsedCommand,
+    parse_command,
+)
 from begin.exceptions import BeginError
 from begin.registry import (
     Registry,
     RegistryManager,
 )
-from begin.cli.parser import parse_command, ParsedCommand
 
 
 logger = logging.getLogger(__name__)

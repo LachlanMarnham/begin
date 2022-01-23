@@ -9,7 +9,9 @@ from begin.constants import ExitCodeEnum
 from begin.exceptions import BeginError
 
 
-class TestCli:
+class TestMainPublic:
+    """ These are tests for begin.cli.cli.main. The tests for begin.cli.cli._main are in
+    TestMainPrivate. """
 
     @mock.patch('begin.cli.cli._main')
     def test_main_failure(self, mock_private_main, make_random_string, caplog):
@@ -55,6 +57,11 @@ class TestCli:
 
         # The process should exit with code 0
         assert e_info.value.code is ExitCodeEnum.SUCCESS.value
+
+
+class TestMainPrivate:
+    def test_main_failure(self):
+        pass
 
 
 @mock.patch('begin.cli.cli.Path.home')
