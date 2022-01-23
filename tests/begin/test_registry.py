@@ -52,11 +52,15 @@ class TestTarget:
         )
         return_value = mock_target.execute()
 
-        # Target.execute should defer to Target._function
-        assert mock_function.call_args_list == [mock.call()]
-
         # Target.execute should return None
         assert return_value is None
+
+        options = {'key_1': 'val_1', 'key_2': 'val_2'}
+        return_value = mock_target.execute(**options)
+        assert return_value is None
+
+        # Target.execute should defer to Target._function
+        assert mock_function.call_args_list == [mock.call(), mock.call(**options)]
 
     def test_repr(self):
         def stub_function():
