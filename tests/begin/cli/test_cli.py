@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 from begin.cli import cli
+from begin.cli.parser import ParsedCommand
 from begin.constants import ExitCodeEnum
 from begin.exceptions import BeginError
 
@@ -60,8 +61,33 @@ class TestMainPublic:
 
 
 class TestMainPrivate:
-    def test_main_failure(self):
-        pass
+
+    def test_main(self, resource_factory):
+        registries = resource_factory.registry.create_multi()
+        requests = resource_factory.request.create_multi()
+        parsed_command = ParsedCommand(
+            extension='*recipes.py',
+            global_dir='~/.recipes',
+            requests=requests,
+        )
+        with mock.patch('begin.cli.cli.load_registries', return_value=registries) as mock_load_registries:
+            with mock.patch('begin.cli.cli.parse_command', return_value=parsed_command) as mock_parse_command:
+                with mock.patch('begin.cli.cli.RegistryManager') as MockRegistryManager:
+                    cli._main()
+
+        mock_manager = MockRegistryManager.create.return_value
+        assert mock_parse_command.call_args_list == [mock.call()]
+        assert mock_load_registries.call_args_list == [mock.call()]
+        assert MockRegistryManager.create.call_args_list == [mock.call(registries)]
+        assert mock_manager.get_target.call_count == len(requests)
+
+        for i in range(len(requests)):
+            request = requests[i]
+            get_target_call = mock_manager.get_target.call_args_list[i]
+            assert get_target_call == mock.call(
+                request.target_name,
+                request.registry_namespace,
+            )
 
 
 @mock.patch('begin.cli.cli.Path.home')
