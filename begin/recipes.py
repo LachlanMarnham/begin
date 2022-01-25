@@ -9,19 +9,19 @@ def with_exit(fn):
 
 @with_exit
 def flake8(*args) -> int:
-    from flake8.main.cli import main
+    from flake8.main.cli import main as _flake8_main
 
     # flake8.main.cli.main expects a list of strings
     args_list = list(args)
 
-    return main(args_list)
+    return _flake8_main(args_list)
 
 
 @with_exit
 def pytest(*args) -> int:
-    import pytest
+    from pytest import main as _pytest_main
 
     # pytest.main expects a list of strings
     args_list = list(args)
 
-    return pytest.main(args_list)
+    return _pytest_main(args_list)
