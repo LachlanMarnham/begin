@@ -8,9 +8,13 @@ def with_exit(fn):
 
 
 @with_exit
-def flake8() -> int:
+def flake8(*args) -> int:
     from flake8.main.cli import main
-    return main(sys.argv[2:])
+
+    # flake8.main.cli.main expects a list of strings
+    args_list = list(args)
+
+    return main(args_list)
 
 
 @with_exit
