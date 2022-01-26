@@ -8,6 +8,16 @@ def with_exit(fn):
 
 
 @with_exit
+def coverage(*args) -> int:
+    from coverage.cmdline import main as _coverage_main
+
+    # coverage.cmdline.main expects a list of strings
+    args_list = list(args)
+
+    return _coverage_main(args_list)
+
+
+@with_exit
 def flake8(*args) -> int:
     from flake8.main.cli import main as _flake8_main
 
