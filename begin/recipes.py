@@ -1,14 +1,19 @@
 import sys
+from typing import (
+    Any,
+    Callable,
+    NoReturn,
+)
 
 
-def with_exit(fn):
-    def _fn(*args, **kwargs):
+def with_exit(fn: Callable) -> Callable:
+    def _fn(*args: Any, **kwargs: Any) -> NoReturn:
         sys.exit(fn(*args, **kwargs))
     return _fn
 
 
 @with_exit
-def coverage(*args) -> int:
+def coverage(*args: str) -> int:
     from coverage.cmdline import main as _coverage_main
 
     # coverage.cmdline.main expects a list of strings
@@ -18,7 +23,7 @@ def coverage(*args) -> int:
 
 
 @with_exit
-def flake8(*args) -> int:
+def flake8(*args: str) -> int:
     from flake8.main.cli import main as _flake8_main
 
     # flake8.main.cli.main expects a list of strings
@@ -28,7 +33,7 @@ def flake8(*args) -> int:
 
 
 @with_exit
-def pytest(*args) -> int:
+def pytest(*args: str) -> int:
     from pytest import main as _pytest_main
 
     # pytest.main expects a list of strings
