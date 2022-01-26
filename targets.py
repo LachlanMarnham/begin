@@ -1,3 +1,6 @@
+import sys
+from pathlib import Path
+
 from begin import Registry
 from begin.recipes import (
     flake8,
@@ -5,61 +8,47 @@ from begin.recipes import (
 )
 
 
-registry = Registry()
+local_registry = Registry()
+ci_registry = Registry(name='ci')
 
 
-@registry.register_target
+@local_registry.register_target
+@ci_registry.register_target
 def check_style():
     flake8()
 
 
-@registry.register_target
+# TODO when target name overrides are implemented, change the
+# function name to tests_coverage, then override like:
+# local invocation: begin tests
+# ci invocation: begin test-coverage@ci
+# then add a new function called tests which doesn't collect
+# coverage data and invoke like tests@ci
+@local_registry.register_target
+@ci_registry.register_target
 def tests():
-    pytest('--cov', 'begin')
-
-
-# TODO change recipe name to tests
-@registry.register_target
-def tests_coverage():
-    import sysconfig
-    import sys
-    import os
-    pth_dir = sysconfig.get_path("purelib")
-    pth_path = os.path.join(pth_dir, "zzz_setup.cfg")
-    with open(pth_path, "w") as pth_file:
-        pth_file.write("import coverage; coverage.process_startup()\n")
-
-    import coverage
-    cov = coverage.Coverage(config_file="setup.cfg")
-    cov._warn_unimported_source = False
-    cov._warn_preimported_source = False
-    cov.start()
-
+    """ Note: this approach is only required because we are using `begin` to trigger
+    tests of `begin`. When `begin` is used to trigger tests in 3rd party repositories,
+    `pytest('--cov', 'package_name')` is sufficient to run tests. `coverage` (and
+    therefore `pytest-cov`) reports incorrect coverage data if the package under test
+    is imported prior to the invocation of `pytest`. Therefore, immediately before the
+    call to `pytest`, we need to remove every `begin` module which was import from
+    `sys.modules`. """
     import begin
-    covmods = {}
-    begin_dir = os.path.split(begin.__file__)[0]
+    begin_dir = Path(begin.__file__).parent
 
-    # We have to make a list since we'll be deleting in the loop.
+    # Remove all begin modules which have been imported since
+    # the interpreter started
     modules = list(sys.modules.items())
-    for name, mod in modules:
-        if name.startswith('begin'):
-            if getattr(mod, '__file__', "??").startswith(begin_dir):
-                covmods[name] = mod
-                del sys.modules[name]
-    import coverage                         # pylint: disable=reimported
-    # sys.modules.update(covmods)
+    for module_name, module_object in modules:
+        module_path = getattr(module_object, '__file__', '')
+        if module_name.startswith('begin') and module_path.startswith(str(begin_dir)):
+            del sys.modules[module_name]
 
-    # Run tests, with the arguments from our command line.
+    # Use the pytest recipe to run the tests with coverage collection
     pytest('--cov', 'begin')
 
-    cov.stop()
-    os.remove(pth_path)
-    cov.combine()
-    cov.save()
-    import pdb; pdb.set_trace()
-    print(pth_path)
 
-
-@registry.register_target
+@local_registry.register_target
 def install():
     print('default install')
