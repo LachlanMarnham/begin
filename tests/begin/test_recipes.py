@@ -45,3 +45,16 @@ def test_flake8(mock_flake8_main):
 
     assert mock_flake8_main.call_args_list == [mock.call(stub_args)]
     assert err_info.value.code == exit_code
+
+
+@mock.patch('pytest.main')
+def test_pytest(mock_pytest_main):
+    exit_code = randint(0, 100)
+    mock_pytest_main.return_value = exit_code
+    stub_args = ['--some', 'command', '--line', 'args']
+
+    with pytest.raises(SystemExit) as err_info:
+        recipes.pytest(*stub_args)
+
+    assert mock_pytest_main.call_args_list == [mock.call(stub_args)]
+    assert err_info.value.code == exit_code
