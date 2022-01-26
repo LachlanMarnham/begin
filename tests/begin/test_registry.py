@@ -210,7 +210,24 @@ class TestRegistry:
             def foo():
                 pass
 
-            assert mock_register.call_args_list == [mock.call(foo, key='value')]
+            assert mock_register.call_args_list == [mock.call(foo, **options)]
+
+    def test_register_target_with_multiple_registries(self):
+        """ A target function should be registerable with multiple registries,
+        and should be correctly namespaced by each. """
+        registry_1 = Registry(name='registry_1')
+        registry_2 = Registry(name='registry_2')
+
+        @registry_1.register_target
+        @registry_2.register_target
+        def foo():
+            pass
+
+        for registry in (registry_1, registry_2):
+            assert len(registry.targets) == 1
+            target = registry.targets.pop()
+            assert target.registry_namespace == registry.name
+            assert target._function == foo
 
 
 class TestRegistryManager:
