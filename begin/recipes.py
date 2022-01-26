@@ -5,6 +5,8 @@ from typing import (
     NoReturn,
 )
 
+from begin.utils import patched_argv_context
+
 
 def with_exit(fn: Callable) -> Callable:
     def _fn(*args: Any, **kwargs: Any) -> NoReturn:
@@ -40,3 +42,14 @@ def pytest(*args: str) -> int:
     args_list = list(args)
 
     return _pytest_main(args_list)
+
+
+@with_exit
+def black(*args: str) -> int:
+    from black import patched_main as _black_main
+
+    # black.main expects a list of strings
+    args_list = list(args)
+
+    with patched_argv_context('black', *args_list):
+        return _black_main()
