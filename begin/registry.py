@@ -1,9 +1,11 @@
 import inspect
+from dataclasses import dataclass
 import logging
 from collections import defaultdict
 from pathlib import Path
 from typing import (
     Callable,
+    Optional,
     Dict,
     List,
     Set,
@@ -16,11 +18,17 @@ from begin.exceptions import RegistryNameCollisionError
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class TargetOptions:
+    name_override: Optional[str] = None
+
+
 class Target:
 
-    def __init__(self, function: Callable, registry_namespace: str) -> None:
+    def __init__(self, function: Callable, registry_namespace: str, **options: str) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
+        self._options = TargetOptions(**options)
 
     @property
     def registry_namespace(self) -> str:
@@ -28,7 +36,10 @@ class Target:
 
     @property
     def function_name(self) -> str:
-        return self._function.__name__
+        # TODO change this to target_name, or just name
+        function_name = self._function.__name__
+        name_override = self._options.name_override
+        return name_override or function_name
 
     def execute(self, **options) -> None:
         self._function(**options)
@@ -78,6 +89,7 @@ class Registry:
         new_target = Target(
             function=function,
             registry_namespace=self.name,
+            **kwargs,
         )
         self.targets.add(new_target)
 
