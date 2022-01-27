@@ -1,10 +1,9 @@
 import sys
 from pathlib import Path
 
-from begin import Registry
-from begin.recipes import (
-    flake8,
-    pytest,
+from begin import (
+    Registry,
+    recipes,
 )
 
 
@@ -15,7 +14,12 @@ ci_registry = Registry(name='ci')
 @local_registry.register_target
 @ci_registry.register_target
 def check_style():
-    flake8()
+    recipes.flake8()
+
+
+@local_registry.register_target
+def isort():
+    recipes.isort('-y')
 
 
 # TODO when target name overrides are implemented, change the
@@ -46,7 +50,7 @@ def tests():
             del sys.modules[module_name]
 
     # Use the pytest recipe to run the tests with coverage collection
-    pytest('--cov', 'begin')
+    recipes.pytest('--cov', 'begin')
 
 
 @local_registry.register_target
