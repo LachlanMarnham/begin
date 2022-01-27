@@ -5,6 +5,7 @@ from begin import (
     Registry,
     recipes,
 )
+from begin.utils import str_to_bool
 
 
 local_registry = Registry()
@@ -23,8 +24,7 @@ def sort_imports():
 
 
 @local_registry.register_target(name_override='tests')
-@ci_registry.register_target(name_override='test-coverage')
-def tests_with_coverage():
+def tests_with_coverage(xml_coverage_report=False):
     """ Note: this approach is only required because we are using `begin` to trigger
     tests of `begin`. When `begin` is used to trigger tests in 3rd party repositories,
     `pytest('--cov', 'package_name')` is sufficient to run tests. `coverage` (and
@@ -43,8 +43,20 @@ def tests_with_coverage():
         if module_name.startswith('begin') and module_path.startswith(str(begin_dir)):
             del sys.modules[module_name]
 
+    # TODO do this with arg converters
+    if not isinstance(xml_coverage_report, bool):
+        xml_coverage_report = str_to_bool(xml_coverage_report)
+
     # Use the pytest recipe to run the tests with coverage collection
-    recipes.pytest('--cov', 'begin')
+    if xml_coverage_report:
+        recipes.pytest('--cov', 'begin', '--cov-report', 'xml')
+    else:
+        recipes.pytest('--cov', 'begin')
+
+
+@ci_registry.register_target(name_override='test-coverage')
+def ci_tests_with_coverage():
+    tests_with_coverage(xml_coverage_report=True)
 
 
 @ci_registry.register_target(name_override='tests')
