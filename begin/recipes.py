@@ -43,6 +43,16 @@ def isort(*args: str) -> int:
 
 
 @with_exit
+def pip(*args) -> int:
+    from pip._internal import main
+
+    # pip._internal.main expects a list of strings
+    args_list = list(args)
+
+    return main(args_list)
+
+
+@with_exit
 def pytest(*args: str) -> int:
     from pytest import main as _pytest_main
 
