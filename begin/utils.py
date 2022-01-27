@@ -1,5 +1,10 @@
 import sys
 from contextlib import contextmanager
+from typing import (
+    Any,
+    Callable,
+    NoReturn,
+)
 
 
 @contextmanager
@@ -24,3 +29,9 @@ def patched_argv_context(*args):
         yield
     finally:
         sys.argv = _old_argv
+
+
+def with_exit(fn: Callable) -> Callable:
+    def _fn(*args: Any, **kwargs: Any) -> NoReturn:
+        sys.exit(fn(*args, **kwargs))
+    return _fn

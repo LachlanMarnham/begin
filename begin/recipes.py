@@ -1,17 +1,7 @@
-import sys
-from typing import (
-    Any,
-    Callable,
-    NoReturn,
+from begin.utils import (
+    patched_argv_context,
+    with_exit,
 )
-
-from begin.utils import patched_argv_context
-
-
-def with_exit(fn: Callable) -> Callable:
-    def _fn(*args: Any, **kwargs: Any) -> NoReturn:
-        sys.exit(fn(*args, **kwargs))
-    return _fn
 
 
 @with_exit

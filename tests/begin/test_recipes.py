@@ -6,22 +6,6 @@ import pytest
 from begin import recipes
 
 
-@pytest.mark.parametrize('exit_code', tuple(range(20)))
-def test_with_exit(exit_code):
-    """ We parametrize over the first few exit codes to
-    ensure they are all handled the same. `recipes.with_exit`
-    should always raise, even in the case where `foo` ran
-    successfully (`exit_code==0`). """
-    @recipes.with_exit
-    def foo():
-        return exit_code
-
-    with pytest.raises(SystemExit) as err_info:
-        foo()
-
-    assert err_info.value.code == exit_code
-
-
 @mock.patch('begin.recipes.patched_argv_context')
 def test_black(mock_patched_argv_ctx, mock_missing_injected_dependency):
     mock_black = mock_missing_injected_dependency(
