@@ -94,6 +94,11 @@ def install_ci():
     install()
 
 
-@local_registry.register_target
+@ci_registry.register_target
 def build():
     recipes.poetry('build')
+
+
+@ci_registry.register_target
+def publish():
+    recipes.poetry('publish')
