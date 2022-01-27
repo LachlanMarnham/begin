@@ -62,19 +62,17 @@ def test_pytest(mock_pytest_main):
 
 
 @mock.patch('begin.recipes.patched_argv_context')
-def test_black(mock_patched_argv_ctx, create_fake_python_package):
-    create_fake_python_package(
-        qualified_module='black',
-        function_name='patched_main',
+def test_black(mock_patched_argv_ctx, mock_missing_injected_dependency):
+    mock_black = mock_missing_injected_dependency(
+        module_name='black',
     )
     exit_code = randint(0, 100)
-    with mock.patch('black.patched_main') as mock_black_patched_main:
-        mock_black_patched_main.return_value = exit_code
-        stub_args = ['--some', 'command', '--line', 'args']
+    mock_black.patched_main.return_value = exit_code
+    stub_args = ['--some', 'command', '--line', 'args']
 
-        with pytest.raises(SystemExit) as err_info:
-            recipes.black(*stub_args)
+    with pytest.raises(SystemExit) as err_info:
+        recipes.black(*stub_args)
 
-    assert mock_black_patched_main.call_args_list == [mock.call()]
+    assert mock_black.patched_main.call_args_list == [mock.call()]
     assert mock_patched_argv_ctx.call_args_list == [mock.call('black', *stub_args)]
     assert err_info.value.code == exit_code
