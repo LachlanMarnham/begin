@@ -38,6 +38,6 @@ def with_exit(fn: Callable) -> Callable:
 
 
 def str_to_bool(arg: str) -> bool:
-    if arg.lower() in {'y', 'yes', 'true', 't', '1'}:
-        return True
-    return False
+    if arg.lower() in {'no', 'n', 'false', 'f', '0'}:
+        return False
+    return True

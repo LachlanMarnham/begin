@@ -45,3 +45,31 @@ def test_with_exit(exit_code):
         foo()
 
     assert err_info.value.code == exit_code
+
+
+@pytest.mark.parametrize('arg, result', (
+    ('yes', True),
+    ('Yes', True),
+    ('YES', True),
+    ('y', True),
+    ('Y', True),
+    ('true', True),
+    ('True', True),
+    ('TRUE', True),
+    ('t', True),
+    ('T', True),
+    ('1', True),
+    ('no', False),
+    ('No', False),
+    ('NO', False),
+    ('n', False),
+    ('N', False),
+    ('false', False),
+    ('False', False),
+    ('FALSE', False),
+    ('f', False),
+    ('F', False),
+    ('0', False),
+))
+def test_str_to_bool(arg, result):
+    assert utils.str_to_bool(arg) is result
