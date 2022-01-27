@@ -266,6 +266,19 @@ class TestRegistry:
         assert target._function == foo
         assert target.function_name == 'foo'
 
+    def test_private_register_target_with_kwargs(self):
+        registry = Registry()
+        stub_name_override = 'name_override'
+
+        @registry.register_target(name_override=stub_name_override)
+        def foo():
+            pass
+
+        assert len(registry.targets) == 1
+        target = registry.targets.pop()
+        assert target.registry_namespace == registry.name
+        assert target._function == foo
+        assert target.function_name == stub_name_override
 
 class TestRegistryManager:
 
