@@ -65,3 +65,19 @@ def install():
             raise
 
     recipes.poetry('install')
+
+
+@ci_registry.register_target
+def setup_poetry_ci():
+    try:
+        # TODO once config reading is done, we can probably
+        # pin the poetry version in `pyproject.toml`, read
+        # it from there into settings, and use settings for
+        # the version below. That way there's one source of
+        # truth.
+        recipes.pip('install', 'poetry==1.1.3')
+    except SystemExit as err:
+        if err.code != 0:
+            raise
+
+    recipes.poetry('config', 'virtualenvs.create', 'false')
