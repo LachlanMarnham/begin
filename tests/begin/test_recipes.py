@@ -48,6 +48,19 @@ def test_flake8(mock_flake8_main):
     assert err_info.value.code == exit_code
 
 
+@mock.patch('isort.main.main')
+def test_isort(mock_isort_main):
+    exit_code = randint(0, 100)
+    mock_isort_main.return_value = exit_code
+    stub_args = ('--some', 'command', '--line', 'args')
+
+    with pytest.raises(SystemExit) as err_info:
+        recipes.isort(*stub_args)
+
+    assert mock_isort_main.call_args_list == [mock.call(stub_args)]
+    assert err_info.value.code == exit_code
+
+
 @mock.patch('pytest.main')
 def test_pytest(mock_pytest_main):
     exit_code = randint(0, 100)
