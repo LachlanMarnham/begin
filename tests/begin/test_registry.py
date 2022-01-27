@@ -44,7 +44,7 @@ class TestTarget:
         )
         assert target.registry_namespace is registry_namespace
 
-    def test_function_name(self):
+    def test_function_name_without_override(self):
         def stub_function():
             pass
 
@@ -52,7 +52,20 @@ class TestTarget:
             function=stub_function,
             registry_namespace='namespace',
         )
-        assert target.function_name == 'stub_function'
+        assert target.function_name is 'stub_function'
+
+    def test_function_name_with_override(self):
+        def stub_function():
+            pass
+
+        stub_name_override = 'name_override'
+
+        target = Target(
+            function=stub_function,
+            registry_namespace='namespace',
+            name_override=stub_name_override,
+        )
+        assert target.function_name is stub_name_override
 
     def test_execute(self):
         mock_function = mock.Mock()
