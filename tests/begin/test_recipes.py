@@ -130,6 +130,68 @@ class TestPoetry:
         assert str(expected_current_vendors) in sys.path
         assert str(expected_lib) in sys.path
 
+    @mock.patch('begin.recipes.patched_argv_context')
+    @mock.patch('begin.recipes._get_global_poetry_entrypoint')
+    @mock.patch('begin.recipes._get_local_poetry_entrypoint')
+    @pytest.mark.parametrize('local_main, global_main', (
+        (mock.Mock(), mock.Mock()),
+        (mock.Mock(), None),
+        (None, mock.Mock()),
+    ))
+    def test_recipe_poetry_importable(self,
+        mock_get_local_poetry,
+        mock_get_global_poetry,
+        mock_patched_argv_ctx,
+        local_main,
+        global_main,
+    ):
+        """ Mock out `recipes._get_local_poetry_entrypoint` and
+        `recipes._get_global_poetry_entrypoint`, and parametrize over whether
+        they do/don't return a function. When neither return a function
+        the recipe behaviour is different. That case is covered in
+        `test_recipe_poetry_not_importable`. """
+        exit_code = randint(0, 100)
+
+        if isinstance(local_main, mock.Mock):
+            local_main.return_value = exit_code
+        if isinstance(global_main, mock.Mock):
+            global_main.return_value = exit_code
+        mock_get_local_poetry.return_value = local_main
+        mock_get_global_poetry.return_value = global_main
+        stub_args = ['--some', 'command', '--line', 'args']
+
+        # The recipe should exit with the correct status
+        with pytest.raises(SystemExit) as err_info:
+            recipes.poetry(*stub_args)
+        assert err_info.value.code == exit_code
+
+        # Checks how many times `_get_global_poetry_entrypoint` and
+        # `_get_local_poetry_entrypoint`, and their returned `main`
+        # functions, are called
+        if local_main is not None:
+            assert mock_get_local_poetry.call_args_list == [mock.call()]
+            assert mock_get_global_poetry.call_args_list == []
+            assert local_main.call_args_list == [mock.call()]
+        else:
+            assert mock_get_local_poetry.call_args_list == [mock.call()]
+            assert mock_get_global_poetry.call_args_list == [mock.call()]
+            assert global_main.call_args_list == [mock.call()]
+
+        # Arguments passed to the recipe should propagate to patched_argv_context
+        assert mock_patched_argv_ctx.call_args_list == [mock.call('poetry', *stub_args)]
+
+    @mock.patch('begin.recipes._get_global_poetry_entrypoint', return_value=None)
+    @mock.patch('begin.recipes._get_local_poetry_entrypoint', return_value=None)
+    def test_recipe_poetry_not_importable(self, mock_get_local, mock_get_global):
+        with pytest.raises(ModuleNotFoundError) as err_info:
+            recipes.poetry('--some', 'command', '--line', 'args')
+        assert mock_get_local.call_args_list == [mock.call()]
+        assert mock_get_global.call_args_list == [mock.call()]
+
+        # The error message should match the standard ModuleImportError message,
+        # but is raised manually
+        assert str(err_info.value) == "No module named 'poetry'"
+
 
 @mock.patch('pip._internal.cli.main.main')
 def test_pip(mock_pip_internal_main):
