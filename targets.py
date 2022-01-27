@@ -17,6 +17,9 @@ def check_style():
     recipes.flake8()
 
 
+# TODO when target name overrides are implemented, change
+# this function to sort_dependencies, override with isort,
+# and stop namespacing recipes
 @local_registry.register_target
 def isort():
     recipes.isort('-y')
@@ -55,4 +58,10 @@ def tests():
 
 @local_registry.register_target
 def install():
-    print('default install')
+    try:
+        recipes.pip('install', '--upgrade', 'pip')
+    except SystemExit as err:
+        if err.code != 0:
+            raise
+
+    recipes.poetry('install')
