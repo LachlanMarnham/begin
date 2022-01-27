@@ -216,7 +216,7 @@ class TestRegistry:
         calling_path = Registry._get_calling_context_path()
         assert calling_path == Path(__file__)
 
-    def test_register_target_no_kwargs(self):
+    def test_public_register_target_no_kwargs(self):
         registry = Registry()
 
         with mock.patch.object(registry, '_register_target') as mock_register:
@@ -225,7 +225,7 @@ class TestRegistry:
                 pass
             assert mock_register.call_args_list == [mock.call(foo)]
 
-    def test_register_target_with_kwargs(self):
+    def test_public_register_target_with_kwargs(self):
         registry = Registry()
         options = {'key': 'value'}
 
@@ -236,7 +236,7 @@ class TestRegistry:
 
             assert mock_register.call_args_list == [mock.call(foo, **options)]
 
-    def test_register_target_with_multiple_registries(self):
+    def test_public_register_target_with_multiple_registries(self):
         """ A target function should be registerable with multiple registries,
         and should be correctly namespaced by each. """
         registry_1 = Registry(name='registry_1')
@@ -252,6 +252,19 @@ class TestRegistry:
             target = registry.targets.pop()
             assert target.registry_namespace == registry.name
             assert target._function == foo
+
+    def test_private_register_target_no_kwargs(self):
+        registry = Registry()
+
+        @registry.register_target
+        def foo():
+            pass
+
+        assert len(registry.targets) == 1
+        target = registry.targets.pop()
+        assert target.registry_namespace == registry.name
+        assert target._function == foo
+        assert target.function_name == 'foo'
 
 
 class TestRegistryManager:

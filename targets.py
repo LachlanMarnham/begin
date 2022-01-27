@@ -107,3 +107,8 @@ def build():
 @ci_registry.register_target
 def publish():
     recipes.poetry('publish')
+
+
+@local_registry.register_target(name_override='dummy2')
+def dummy(arg1, arg2):
+    print('default dummy', arg1, arg2)
