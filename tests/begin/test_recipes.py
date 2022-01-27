@@ -88,6 +88,12 @@ class TestPoetry:
 
         assert recipes._get_local_poetry_entrypoint() is mock_poetry.main
 
+    @mock.patch('begin.recipes.subprocess')
+    def test_get_global_poetry_entrypoint_module_not_found(self, mock_subprocess):
+        mock_subprocess.run.return_value.return_code = 1
+        assert recipes._get_global_poetry_entrypoint() is None
+
+
 
 @mock.patch('pip._internal.cli.main.main')
 def test_pip(mock_pip_internal_main):
