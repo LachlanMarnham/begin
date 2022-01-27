@@ -74,6 +74,7 @@ def mock_missing_injected_dependency():
     is not a dependency of `begin`). This fixture can be used to mock the injected
     package. """
     _module_name = None
+
     def _mock_missing_injected_dependency(module_name):
         """ If the recipe contains `from package.module.submodule import main`, module
         should be `'package.module.submodule'`"""
