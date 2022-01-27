@@ -35,6 +35,13 @@ def flake8(*args: str) -> int:
 
 
 @with_exit
+def isort(*args: str) -> int:
+    from isort.main import main
+
+    return main(args)
+
+
+@with_exit
 def pytest(*args: str) -> int:
     from pytest import main as _pytest_main
 
