@@ -35,3 +35,9 @@ def with_exit(fn: Callable) -> Callable:
     def _fn(*args: Any, **kwargs: Any) -> NoReturn:
         sys.exit(fn(*args, **kwargs))
     return _fn
+
+
+def str_to_bool(arg: str) -> bool:
+    if arg.lower() in {'y', 'yes', 'true', 't', '1'}:
+        return True
+    return False
