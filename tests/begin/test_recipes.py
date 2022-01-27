@@ -1,5 +1,6 @@
 from random import randint
 from unittest import mock
+import sys
 
 import pytest
 
@@ -82,6 +83,7 @@ class TestPoetry:
         self,
         mock_missing_injected_dependency,
     ):
+        """ If poetry is importable, `poetry.console.main` should be returned """
         mock_poetry = mock_missing_injected_dependency(
             module_name='poetry.console',
         )
@@ -90,9 +92,43 @@ class TestPoetry:
 
     @mock.patch('begin.recipes.subprocess')
     def test_get_global_poetry_entrypoint_module_not_found(self, mock_subprocess):
-        mock_subprocess.run.return_value.return_code = 1
+        """ If the call to `which poetry` returns a non-zero exit code, `None` 
+        should be returned. """
+        mock_subprocess.run.return_value.returncode = 1
         assert recipes._get_global_poetry_entrypoint() is None
+        assert mock_subprocess.run.call_args_list == [mock.call(['which', 'poetry'], capture_output=True)]
 
+    @mock.patch('begin.recipes.subprocess')
+    def test_get_global_poetry_entrypoint_module_is_found(
+        self,
+        mock_subprocess,
+        mock_missing_injected_dependency,
+        tmp_path,
+    ):
+        """ If the call to `which poetry` returns an exit code of zero, mock the
+        `poetry` path with a `tmp_path` and make sure its derivatives are added
+        to the `sys.path` and the module can be imported. """
+        mock_poetry = mock_missing_injected_dependency(
+            module_name='poetry.console',
+        )
+        mock_which_poetry = mock_subprocess.run.return_value
+
+        # `which poetry` was successful: exit code should be 0 and a (`bytes`) path
+        # to the `poetry` entrypoint should be returned.
+        mock_which_poetry.returncode = 0
+        mock_which_poetry.stdout = bytes(tmp_path)
+        expected_lib = tmp_path.joinpath('../../lib').resolve()
+        expected_current_vendors = expected_lib.joinpath(
+            'poetry/_vendor/py{0[0]}.{0[1]}'.format(sys.version_info),
+        )
+
+        # `poetry.console.main` should be returned
+        assert recipes._get_global_poetry_entrypoint() == mock_poetry.main
+
+        # A couple of derivates of the `tmp_path` should have been added to the
+        # `sys.path`
+        assert str(expected_current_vendors) in sys.path
+        assert str(expected_lib) in sys.path
 
 
 @mock.patch('pip._internal.cli.main.main')
