@@ -92,3 +92,8 @@ def install_ci():
             raise
 
     install()
+
+
+@local_registry.register_target
+def build():
+    recipes.poetry('build')
