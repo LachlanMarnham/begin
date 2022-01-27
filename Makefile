@@ -16,7 +16,6 @@ build:
 publish:
 	poetry publish
 
-# TODO
 release:
 	changelog-gen
 

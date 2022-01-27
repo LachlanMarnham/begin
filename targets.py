@@ -67,6 +67,11 @@ def install():
     recipes.poetry('install')
 
 
+@local_registry.register_target
+def release():
+    recipes.changelog_gen()
+
+
 @ci_registry.register_target
 def setup_poetry_ci():
     try:
