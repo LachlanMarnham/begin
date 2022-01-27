@@ -20,11 +20,16 @@ logger = logging.getLogger(__name__)
 def black(*args: str) -> int:
     from black import patched_main as _black_main
 
-    # black.main expects a list of strings
-    args_list = list(args)
-
-    with patched_argv_context('black', *args_list):
+    with patched_argv_context('black', *args):
         return _black_main()
+
+
+@with_exit
+def changelog_gen(*args: str) -> int:
+    from changelog_gen.cli.command import gen
+
+    with patched_argv_context('changelog-gen', *args):
+        return gen()
 
 
 @with_exit
