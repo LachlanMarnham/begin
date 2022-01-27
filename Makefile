@@ -28,10 +28,8 @@ check-style:
 tests:
 	pytest --cov=begin
 
-# TODO
 ci-tests:
 	pytest
 
-# TODO
 ci-tests-with-coverage:
 	pytest --cov=begin --cov-report=xml
