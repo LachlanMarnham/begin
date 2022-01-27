@@ -62,6 +62,33 @@ def test_isort(mock_isort_main):
     assert err_info.value.code == exit_code
 
 
+class TestPoetry:
+
+    def test_get_local_poetry_entrypoint_module_not_found(
+        self,
+        mock_missing_injected_dependency,
+    ):
+        """ If poetry isn't importable, the `ModuleNotFoundError` should
+        be caught and `None` returned. We can't be sure that no developers
+        will use a local poetry install, therefore we mock `poetry` to be sure
+        despite it being a dev dependency of `begin`. Note that, with the mock:
+            this will work: `import poetry`
+            this will fail: `from poetry.console import main`
+        """
+        mock_missing_injected_dependency(module_name='poetry')
+        assert recipes._get_local_poetry_entrypoint() is None
+
+    def test_get_local_poetry_entrypoint_module_is_found(
+        self,
+        mock_missing_injected_dependency,
+    ):
+        mock_poetry = mock_missing_injected_dependency(
+            module_name='poetry.console',
+        )
+
+        assert recipes._get_local_poetry_entrypoint() is mock_poetry.main
+
+
 @mock.patch('pip._internal.cli.main.main')
 def test_pip(mock_pip_internal_main):
     exit_code = randint(0, 100)
