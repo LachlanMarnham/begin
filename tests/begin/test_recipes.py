@@ -62,6 +62,19 @@ def test_isort(mock_isort_main):
     assert err_info.value.code == exit_code
 
 
+@mock.patch('pip._internal.main')
+def test_pip(mock_pip_internal_main):
+    exit_code = randint(0, 100)
+    mock_pip_internal_main.return_value = exit_code
+    stub_args = ['--some', 'command', '--line', 'args']
+
+    with pytest.raises(SystemExit) as err_info:
+        recipes.pip(*stub_args)
+
+    assert mock_pip_internal_main.call_args_list == [mock.call(stub_args)]
+    assert err_info.value.code == exit_code
+
+
 @mock.patch('pytest.main')
 def test_pytest(mock_pytest_main):
     exit_code = randint(0, 100)
