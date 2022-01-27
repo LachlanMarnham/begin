@@ -62,7 +62,7 @@ def test_isort(mock_isort_main):
     assert err_info.value.code == exit_code
 
 
-@mock.patch('pip._internal.main')
+@mock.patch('pip._internal.cli.main.main')
 def test_pip(mock_pip_internal_main):
     exit_code = randint(0, 100)
     mock_pip_internal_main.return_value = exit_code
