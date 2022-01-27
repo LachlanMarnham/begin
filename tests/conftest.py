@@ -68,43 +68,6 @@ def resource_factory():
 
 
 @pytest.fixture(scope='function')
-def create_fake_python_package(tmp_path):
-    def _create_fake_python_package(qualified_module, function_name):
-        """ Given `qualified_module` (of the form `package.module.submodule.etc`)
-        and `function_name`, creates a function with that name and puts it in
-        `package.module.submodule.etc.__init__.py`. The package is added to `sys.path`.
-
-        This is intended for use in `tests/begin/test_recipes.py`. Recipes sometimes use
-        dependency injection (ie, to provide an interface in front of a package which
-        is not a dependency of `begin`). This fixture can be used to create a fake
-        version of the injected package, so that it can be mocked. """
-
-        # Create the package root inside tmp_path, and add an __init__.py
-        submodules = qualified_module.split('.')
-        module = tmp_path / submodules[0]
-        module.mkdir()
-        init_file = module.joinpath('__init__.py')
-        init_file.touch()
-
-        # If the package contains submodules, create them
-        for submodule in submodules[1:]:
-            module = module / submodule
-            module.mkdir()
-            init_file = module.joinpath('__init__.py')
-            init_file.touch()
-
-        # Add function function_name to the leaf of the tree.
-        # It doesn't need to do anything, its only purpose is to
-        # be mocked
-        with open(init_file, 'w') as fd:
-            fd.write('def {}(): pass'.format(function_name))
-
-        # Add the package to `sys.path`
-        sys.path.append(str(tmp_path))
-    return _create_fake_python_package
-
-
-@pytest.fixture(scope='function')
 def mock_missing_injected_dependency():
     """This is intended for use in `tests/begin/test_recipes.py`. Recipes sometimes
     use dependency injection (ie, to provide an interface in front of a package which
