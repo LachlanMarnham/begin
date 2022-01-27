@@ -22,6 +22,23 @@ def test_with_exit(exit_code):
     assert err_info.value.code == exit_code
 
 
+@mock.patch('begin.recipes.patched_argv_context')
+def test_black(mock_patched_argv_ctx, mock_missing_injected_dependency):
+    mock_black = mock_missing_injected_dependency(
+        module_name='black',
+    )
+    exit_code = randint(0, 100)
+    mock_black.patched_main.return_value = exit_code
+    stub_args = ['--some', 'command', '--line', 'args']
+
+    with pytest.raises(SystemExit) as err_info:
+        recipes.black(*stub_args)
+
+    assert mock_black.patched_main.call_args_list == [mock.call()]
+    assert mock_patched_argv_ctx.call_args_list == [mock.call('black', *stub_args)]
+    assert err_info.value.code == exit_code
+
+
 @mock.patch('coverage.cmdline.main')
 def test_coverage(mock_coverage_main):
     exit_code = randint(0, 100)
@@ -71,21 +88,4 @@ def test_pytest(mock_pytest_main):
         recipes.pytest(*stub_args)
 
     assert mock_pytest_main.call_args_list == [mock.call(stub_args)]
-    assert err_info.value.code == exit_code
-
-
-@mock.patch('begin.recipes.patched_argv_context')
-def test_black(mock_patched_argv_ctx, mock_missing_injected_dependency):
-    mock_black = mock_missing_injected_dependency(
-        module_name='black',
-    )
-    exit_code = randint(0, 100)
-    mock_black.patched_main.return_value = exit_code
-    stub_args = ['--some', 'command', '--line', 'args']
-
-    with pytest.raises(SystemExit) as err_info:
-        recipes.black(*stub_args)
-
-    assert mock_black.patched_main.call_args_list == [mock.call()]
-    assert mock_patched_argv_ctx.call_args_list == [mock.call('black', *stub_args)]
     assert err_info.value.code == exit_code
