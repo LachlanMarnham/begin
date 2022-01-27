@@ -17,23 +17,14 @@ def check_style():
     recipes.flake8()
 
 
-# TODO when target name overrides are implemented, change
-# this function to sort_dependencies, override with isort,
-# and stop namespacing recipes
-@local_registry.register_target
-def isort():
+@local_registry.register_target(name_override='isort')
+def sort_imports():
     recipes.isort('-y')
 
 
-# TODO when target name overrides are implemented, change the
-# function name to tests_coverage, then override like:
-# local invocation: begin tests
-# ci invocation: begin test-coverage@ci
-# then add a new function called tests which doesn't collect
-# coverage data and invoke like tests@ci
-@local_registry.register_target
-@ci_registry.register_target
-def tests():
+@local_registry.register_target(name_override='tests')
+@ci_registry.register_target(name_override='test-coverage')
+def tests_with_coverage():
     """ Note: this approach is only required because we are using `begin` to trigger
     tests of `begin`. When `begin` is used to trigger tests in 3rd party repositories,
     `pytest('--cov', 'package_name')` is sufficient to run tests. `coverage` (and
@@ -54,6 +45,11 @@ def tests():
 
     # Use the pytest recipe to run the tests with coverage collection
     recipes.pytest('--cov', 'begin')
+
+
+@ci_registry.register_target(name_override='tests')
+def tests_without_coverage():
+    recipes.pytest()
 
 
 @local_registry.register_target
