@@ -1,6 +1,6 @@
+import sys
 from random import randint
 from unittest import mock
-import sys
 
 import pytest
 
@@ -34,6 +34,21 @@ def test_coverage(mock_coverage_main):
         recipes.coverage(*stub_args)
 
     assert mock_coverage_main.call_args_list == [mock.call(stub_args)]
+    assert err_info.value.code == exit_code
+
+
+@mock.patch('begin.recipes.patched_argv_context')
+@mock.patch('changelog_gen.cli.command.gen')
+def test_changelog_gen(mock_changelog_gen_main, mock_patched_argv_ctx):
+    exit_code = randint(0, 100)
+    mock_changelog_gen_main.return_value = exit_code
+    stub_args = ['--some', 'command', '--line', 'args']
+
+    with pytest.raises(SystemExit) as err_info:
+        recipes.changelog_gen(*stub_args)
+
+    assert mock_changelog_gen_main.call_args_list == [mock.call()]
+    assert mock_patched_argv_ctx.call_args_list == [mock.call('changelog-gen', *stub_args)]
     assert err_info.value.code == exit_code
 
 
@@ -92,7 +107,7 @@ class TestPoetry:
 
     @mock.patch('begin.recipes.subprocess')
     def test_get_global_poetry_entrypoint_module_not_found(self, mock_subprocess):
-        """ If the call to `which poetry` returns a non-zero exit code, `None` 
+        """ If the call to `which poetry` returns a non-zero exit code, `None`
         should be returned. """
         mock_subprocess.run.return_value.returncode = 1
         assert recipes._get_global_poetry_entrypoint() is None
@@ -138,7 +153,8 @@ class TestPoetry:
         (mock.Mock(), None),
         (None, mock.Mock()),
     ))
-    def test_recipe_poetry_importable(self,
+    def test_recipe_poetry_importable(
+        self,
         mock_get_local_poetry,
         mock_get_global_poetry,
         mock_patched_argv_ctx,
