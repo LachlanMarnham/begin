@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -80,7 +79,7 @@ def _get_local_poetry_entrypoint() -> Optional[PoetryMainType]:
 
 def _get_global_poetry_entrypoint() -> Optional[PoetryMainType]:
     """ Try a global import of `poetry.console.main`. This will work if the
-    user followed the (recommended) global `poetry` install method with 
+    user followed the (recommended) global `poetry` install method with
     get-poetry.py. It looks up the location of the `poetry` script, and then
     adds the package and vendored dependencies to `sys.path`. """
 
@@ -116,7 +115,7 @@ def poetry(*args: str) -> int:
 
     if main is None:
         raise ModuleNotFoundError("No module named 'poetry'")
-    
+
     with patched_argv_context('poetry', *args):
         return main()
 
