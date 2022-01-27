@@ -9,6 +9,7 @@ from begin.registry import (
     RegistryManager,
     Target,
     TargetMap,
+    TargetOptions,
 )
 
 
@@ -17,13 +18,23 @@ class TestTarget:
     def test_initialisation(self):
         stub_function = lambda: ...
         stub_namespace = 'namespace'
-        target = Target(function=stub_function, registry_namespace=stub_namespace)
+        stub_name_override = 'name_override'
+
+        target = Target(
+            function=stub_function,
+            registry_namespace=stub_namespace,
+            name_override=stub_name_override,
+        )
 
         # target._function assigned correctly
         assert target._function is stub_function
 
         # target._registry_namespace assigned correctly
         assert target._registry_namespace is stub_namespace
+
+        # target._option assign correctly
+        assert isinstance(target._options, TargetOptions)
+        assert target._options.name_override is stub_name_override
 
     def test_registry_namespace(self):
         registry_namespace = 'namespace'
