@@ -81,3 +81,14 @@ def setup_poetry_ci():
             raise
 
     recipes.poetry('config', 'virtualenvs.create', 'false')
+
+
+@ci_registry.register_target
+def install_ci():
+    try:
+        setup_poetry_ci()
+    except SystemExit as err:
+        if err.code != 0:
+            raise
+
+    install()
