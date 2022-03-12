@@ -43,6 +43,19 @@ class TestTarget:
         )
         assert target.function_name == 'stub_function'
 
+    def test_target_name_override(self):
+        custom_name = 'custom-name'
+
+        def stub_function():
+            pass
+
+        target = Target(
+            function=stub_function,
+            registry_namespace='namespace',
+            name=custom_name,
+        )
+        assert target.function_name == custom_name
+
     def test_execute(self):
         mock_function = mock.Mock()
         mock_function.__name__ = 'mock_function'
@@ -211,6 +224,18 @@ class TestRegistry:
                 pass
 
             assert mock_register.call_args_list == [mock.call(foo, key='value')]
+
+    def test_register_with_name_override(self):
+        registry = Registry()
+        name = 'this-name'
+
+        @registry.register_target(name=name)
+        def not_this_name():
+            pass
+
+        assert len(registry.targets) == 1
+        target = next(iter(registry.targets))
+        assert target.function_name == name
 
 
 class TestRegistryManager:
