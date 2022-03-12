@@ -6,6 +6,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Optional,
     Set,
 )
 
@@ -18,9 +19,15 @@ logger = logging.getLogger(__name__)
 
 class Target:
 
-    def __init__(self, function: Callable, registry_namespace: str) -> None:
+    def __init__(
+        self,
+        function: Callable,
+        registry_namespace: str,
+        name: Optional[str] = None,
+    ) -> None:
         self._function = function
         self._registry_namespace = registry_namespace
+        self._name = name
 
     @property
     def registry_namespace(self) -> str:
@@ -28,7 +35,7 @@ class Target:
 
     @property
     def function_name(self) -> str:
-        return self._function.__name__
+        return self._name if self._name else self._function.__name__
 
     def execute(self, **options) -> None:
         self._function(**options)
@@ -78,6 +85,7 @@ class Registry:
         new_target = Target(
             function=function,
             registry_namespace=self.name,
+            name=kwargs.get('name'),
         )
         self.targets.add(new_target)
 
