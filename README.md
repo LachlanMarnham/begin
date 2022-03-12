@@ -16,3 +16,5 @@ begin <target_name>@<registry_name> [<key>:<value>]
 3. Target names must not contain a colon or an `@`
 4. If a target name, registry name or argument value contains whitespace, it must be
 wrapped in single quotes.
+
+Global targets can be stored in `$HOME/.begin/*targets.py`. This directory can be overriden to `$BEGIN_HOME/*targets.py` by setting the `$BEGIN_HOME` environment variable.

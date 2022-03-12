@@ -90,19 +90,33 @@ class TestMainPrivate:
             )
 
 
-@mock.patch('begin.cli.cli.Path.home')
-@mock.patch('begin.cli.cli.Path.cwd')
-def test_collect_target_file_paths(mock_cwd, mock_home, target_file_tmp_tree):
-    mock_cwd.return_value = target_file_tmp_tree.cwd_dir
-    mock_home.return_value = target_file_tmp_tree.home_dir
-    target_paths_gen = cli.collect_target_file_paths()
+class TestCollectTargetFilePaths:
+    @mock.patch('begin.cli.cli.Path.home')
+    @mock.patch('begin.cli.cli.Path.cwd')
+    def test_collect_with_default_home_dir(self, mock_cwd, mock_home, target_file_tmp_tree):
+        mock_cwd.return_value = target_file_tmp_tree.cwd_dir
+        mock_home.return_value = target_file_tmp_tree.home_dir
+        target_paths_gen = cli.collect_target_file_paths()
 
-    # target_paths_gen should be a generator
-    assert inspect.isgenerator(target_paths_gen)
+        # target_paths_gen should be a generator
+        assert inspect.isgenerator(target_paths_gen)
 
-    # collect_target_file_paths should collect the correct paths
-    target_paths = set(target_paths_gen)
-    assert target_paths == set(target_file_tmp_tree.expected_target_files)
+        # collect_target_file_paths should collect the correct paths
+        target_paths = set(target_paths_gen)
+        assert target_paths == set(target_file_tmp_tree.expected_target_files)
+
+    @mock.patch('begin.cli.cli.Path.cwd')
+    def test_collect_with_env_var_home_override(self, mock_cwd, target_file_tmp_tree, monkeypatch):
+        mock_cwd.return_value = target_file_tmp_tree.cwd_dir
+        monkeypatch.setenv('BEGIN_HOME', str(target_file_tmp_tree.override_dir))
+        target_paths_gen = cli.collect_target_file_paths()
+
+        # target_paths_gen should be a generator
+        assert inspect.isgenerator(target_paths_gen)
+
+        # collect_target_file_paths should collect the correct paths
+        target_paths = set(target_paths_gen)
+        assert target_paths == set(target_file_tmp_tree.expected_target_files_overriden)
 
 
 def test_load_module_from_path(target_file_tmp_tree):
