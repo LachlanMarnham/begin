@@ -12,6 +12,10 @@ jobs:
       with:
         python-version: '3.7'
     - name: Install dependencies
-      run: make ci-install
+      run: |
+        pip install --upgrade pip
+        pip install poetry==1.1.3
+        poetry config virtualenvs.create false
+        poetry install
     - name: Lint with flake8
-      run: make check-style
+      run: begin check_style@ci

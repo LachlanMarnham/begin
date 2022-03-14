@@ -16,3 +16,20 @@ begin <target_name>@<registry_name> [<key>:<value>]
 3. Target names must not contain a colon or an `@`
 4. If a target name, registry name or argument value contains whitespace, it must be
 wrapped in single quotes.
+
+
+## Contributing
+Although the `targets.py` contains recipes for installing dependencies, they cannot be
+executed until `begin` is installed. To resolve the chicken-and-egg problem, get started
+with:
+
+```bash
+pip install --upgrade pip
+poetry install
+```
+
+Following this initial setup, dependency changes can be picked up with
+
+```bash
+begin install
+```

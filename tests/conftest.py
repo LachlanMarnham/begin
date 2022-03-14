@@ -1,7 +1,9 @@
 import shutil
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
+from unittest import mock
 
 import pytest
 
@@ -63,3 +65,24 @@ def target_file_tmp_tree(tmp_path):
 @pytest.fixture(scope='function')
 def resource_factory():
     return factory.Factory()
+
+
+@pytest.fixture(scope='function')
+def mock_missing_injected_dependency():
+    """This is intended for use in `tests/begin/test_recipes.py`. Recipes sometimes
+    use dependency injection (ie, to provide an interface in front of a package which
+    is not a dependency of `begin`). This fixture can be used to mock the injected
+    package. """
+    _module_name = None
+
+    def _mock_missing_injected_dependency(module_name):
+        """ If the recipe contains `from package.module.submodule import main`, module
+        should be `'package.module.submodule'`"""
+        mock_module = mock.MagicMock()
+        sys.modules[module_name] = mock_module
+        nonlocal _module_name
+        _module_name = module_name
+        return mock_module
+
+    yield _mock_missing_injected_dependency
+    del sys.modules[_module_name]

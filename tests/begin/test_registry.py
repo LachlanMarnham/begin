@@ -9,6 +9,7 @@ from begin.registry import (
     RegistryManager,
     Target,
     TargetMap,
+    TargetOptions,
 )
 
 
@@ -17,7 +18,13 @@ class TestTarget:
     def test_initialisation(self):
         stub_function = lambda: ...
         stub_namespace = 'namespace'
-        target = Target(function=stub_function, registry_namespace=stub_namespace)
+        stub_name_override = 'name_override'
+
+        target = Target(
+            function=stub_function,
+            registry_namespace=stub_namespace,
+            name_override=stub_name_override,
+        )
 
         # target._function assigned correctly
         assert target._function is stub_function
@@ -25,15 +32,19 @@ class TestTarget:
         # target._registry_namespace assigned correctly
         assert target._registry_namespace is stub_namespace
 
+        # target._option assign correctly
+        assert isinstance(target._options, TargetOptions)
+        assert target._options.name_override is stub_name_override
+
     def test_registry_namespace(self):
         registry_namespace = 'namespace'
         target = Target(
             function=lambda: ...,
             registry_namespace=registry_namespace,
         )
-        assert target.registry_namespace is registry_namespace
+        assert target.registry_namespace == registry_namespace
 
-    def test_function_name(self):
+    def test_function_name_without_override(self):
         def stub_function():
             pass
 
@@ -42,6 +53,19 @@ class TestTarget:
             registry_namespace='namespace',
         )
         assert target.function_name == 'stub_function'
+
+    def test_function_name_with_override(self):
+        def stub_function():
+            pass
+
+        stub_name_override = 'name_override'
+
+        target = Target(
+            function=stub_function,
+            registry_namespace='namespace',
+            name_override=stub_name_override,
+        )
+        assert target.function_name == stub_name_override
 
     def test_execute(self):
         mock_function = mock.Mock()
@@ -192,7 +216,7 @@ class TestRegistry:
         calling_path = Registry._get_calling_context_path()
         assert calling_path == Path(__file__)
 
-    def test_register_target_no_kwargs(self):
+    def test_public_register_target_no_kwargs(self):
         registry = Registry()
 
         with mock.patch.object(registry, '_register_target') as mock_register:
@@ -201,7 +225,7 @@ class TestRegistry:
                 pass
             assert mock_register.call_args_list == [mock.call(foo)]
 
-    def test_register_target_with_kwargs(self):
+    def test_public_register_target_with_kwargs(self):
         registry = Registry()
         options = {'key': 'value'}
 
@@ -210,7 +234,51 @@ class TestRegistry:
             def foo():
                 pass
 
-            assert mock_register.call_args_list == [mock.call(foo, key='value')]
+            assert mock_register.call_args_list == [mock.call(foo, **options)]
+
+    def test_public_register_target_with_multiple_registries(self):
+        """ A target function should be registerable with multiple registries,
+        and should be correctly namespaced by each. """
+        registry_1 = Registry(name='registry_1')
+        registry_2 = Registry(name='registry_2')
+
+        @registry_1.register_target
+        @registry_2.register_target
+        def foo():
+            pass
+
+        for registry in (registry_1, registry_2):
+            assert len(registry.targets) == 1
+            target = registry.targets.pop()
+            assert target.registry_namespace == registry.name
+            assert target._function == foo
+
+    def test_private_register_target_no_kwargs(self):
+        registry = Registry()
+
+        @registry.register_target
+        def foo():
+            pass
+
+        assert len(registry.targets) == 1
+        target = registry.targets.pop()
+        assert target.registry_namespace == registry.name
+        assert target._function == foo
+        assert target.function_name == 'foo'
+
+    def test_private_register_target_with_kwargs(self):
+        registry = Registry()
+        stub_name_override = 'name_override'
+
+        @registry.register_target(name_override=stub_name_override)
+        def foo():
+            pass
+
+        assert len(registry.targets) == 1
+        target = registry.targets.pop()
+        assert target.registry_namespace == registry.name
+        assert target._function == foo
+        assert target.function_name == stub_name_override
 
 
 class TestRegistryManager:
