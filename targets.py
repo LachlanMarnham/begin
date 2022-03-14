@@ -18,8 +18,8 @@ def check_style():
     recipes.flake8()
 
 
-@local_registry.register_target(name_override='isort')
-def sort_imports():
+@local_registry.register_target(name_override='sort_imports')
+def isort():
     recipes.isort('-y')
 
 
